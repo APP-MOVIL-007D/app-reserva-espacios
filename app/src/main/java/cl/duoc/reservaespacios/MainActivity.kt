@@ -20,9 +20,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ReservaEspaciosTheme {
-                LoginScreen()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    LoginScreen(modifier = Modifier.padding(innerPadding))
+                }
             }
         }
     }
 }
+
+
 
