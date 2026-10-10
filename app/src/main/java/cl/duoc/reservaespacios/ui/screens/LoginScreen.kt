@@ -21,10 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -65,7 +67,9 @@ fun LoginScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = {},
+            onClick = { navController.navigate("principal"){
+                popUpTo("login") { inclusive = true}
+            } },
             modifier = Modifier.fillMaxWidth(),
             enabled = correo.isNotBlank() && password.isNotBlank()
         ) {
@@ -82,6 +86,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 @Composable
 fun LoginScreenPreview() {
     ReservaEspaciosTheme {
-        LoginScreen()
+        LoginScreen(navController = rememberNavController())
     }
 }

@@ -4,14 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import cl.duoc.reservaespacios.ui.screens.LoginScreen
+import cl.duoc.reservaespacios.ui.screens.PrincipalScreen
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,13 +18,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ReservaEspaciosTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(modifier = Modifier.padding(innerPadding))
-                }
+                MyApp()
             }
         }
     }
 }
 
+@Composable
+fun MyApp() {
+    val navController = rememberNavController()
 
-
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
+            LoginScreen(navController = navController)
+        }
+        composable("principal") {
+            PrincipalScreen()
+        }
+    }
+}
