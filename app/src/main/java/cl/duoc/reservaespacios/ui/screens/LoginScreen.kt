@@ -11,15 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,12 +33,16 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import cl.duoc.reservaespacios.R
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
+import cl.duoc.reservaespacios.utils.validarCorreo
+import cl.duoc.reservaespacios.utils.validarPassword
 
 @Composable
 fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorCorreo by remember { mutableStateOf<String?>(null) }
+    var errorPassword by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier
@@ -45,7 +52,8 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        val logo = (if (isSystemInDarkTheme()) R.drawable.logo_sede_tema_oscuro else R.drawable.logo_sede_tema_claro)
+        val logo =
+            (if (isSystemInDarkTheme()) R.drawable.logo_sede_tema_oscuro else R.drawable.logo_sede_tema_claro)
 
         Image(
             painter = painterResource(logo),
@@ -57,8 +65,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Reserva de espacios",
-            style = MaterialTheme.typography.headlineMedium
+            text = "Reserva de espacios", style = MaterialTheme.typography.headlineMedium
         )
         Text(text = "Sede Viña del Mar")
 
@@ -66,8 +73,18 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         OutlinedTextField(
             value = correo,
-            onValueChange = { correo = it},
+            onValueChange = {
+                correo = it
+                errorCorreo = null
+            },
             label = { Text("Correo Duoc") },
+            isError = errorCorreo != null,
+            supportingText = { errorCorreo?.let { Text(it) } },
+            trailingIcon = {
+                if (errorCorreo != null) Icon(
+                    Icons.Filled.Warning, contentDescription = "Error"
+                )
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -75,9 +92,19 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it},
+            onValueChange = {
+                password = it
+                errorPassword = null
+            },
             visualTransformation = PasswordVisualTransformation(),
             label = { Text("Contraseña") },
+            isError = errorPassword != null,
+            supportingText = { errorPassword?.let { Text(it) } },
+            trailingIcon = {
+                if (errorPassword != null) Icon(
+                    Icons.Filled.Warning, contentDescription = "Error"
+                )
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -85,18 +112,24 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { navController.navigate("principal"){
-                popUpTo("login") { inclusive = true}
-            } },
+            onClick = {
+                errorCorreo = validarCorreo(correo)
+                errorPassword = validarPassword(password)
+                if (errorCorreo == null && errorPassword == null) {
+                    navController.navigate("principal") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
-            enabled = correo.isNotBlank() && password.isNotBlank()
         ) {
             Text("Ingresar")
         }
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "¿Olvidaste tu contraseña?",
-                style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = "¿Olvidaste tu contraseña?", style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
