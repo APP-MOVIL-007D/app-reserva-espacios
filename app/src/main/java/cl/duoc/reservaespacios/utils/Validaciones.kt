@@ -5,7 +5,7 @@ fun validarCorreo(correo: String): String? {
     val limpio = correo.trim().lowercase()
 
     if (limpio.isBlank()) return "Ingresa tu correo"
-    if (!limpio.endsWith("@duoc.cl") && !limpio.endsWith("@profesor.duoc.cl")) {
+    if (!limpio.endsWith("@duocuc.cl") && !limpio.endsWith("@profesor.duocuc.cl")) {
         return "Usa tu correo institucional Duoc Uc"
     }
     return null
