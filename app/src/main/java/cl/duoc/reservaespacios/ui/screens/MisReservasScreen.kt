@@ -10,14 +10,32 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.model.reservasDePrueba
 
 @Composable
 fun MisReservasScreen(modifier: Modifier = Modifier) {
+
+    val pestanasReserva = listOf("Pendientes", "Aprobadas", "Historial")
+    var pestanaActual by remember { mutableIntStateOf(0) }
+
+    val estadoBuscado = when (pestanaActual) {
+        0 -> "Pendiente"
+        1 -> "Aprobada"
+        else -> "Rechazada"
+    }
+
+    val reservasFiltradas = reservasDePrueba.filter { it.estado == estadoBuscado }
+
     Column(
         modifier
             .fillMaxSize()
@@ -28,20 +46,39 @@ fun MisReservasScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn {
-            items(reservasDePrueba) { reserva ->
+        PrimaryTabRow(selectedTabIndex = pestanaActual) {
+            pestanasReserva.forEachIndexed { index, nombre ->
+                Tab(
+                    selected = pestanaActual == index,
+                    onClick = { pestanaActual = index },
+                    text = { Text(nombre) }
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(reserva.estado, style = MaterialTheme.typography.labelMedium)
-                        Text(reserva.espacio, style = MaterialTheme.typography.titleMedium)
-                        Text("${reserva.fecha} · ${reserva.horario}")
-                        Text(reserva.motivo, style = MaterialTheme.typography.bodyMedium)
+        if (reservasFiltradas.isEmpty()) {
+            Text(
+                "No tiene reservas en esta sección",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        } else {
 
+            LazyColumn {
+                items(reservasFiltradas) { reserva ->
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(reserva.estado, style = MaterialTheme.typography.labelMedium)
+                            Text(reserva.espacio, style = MaterialTheme.typography.titleMedium)
+                            Text("${reserva.fecha} · ${reserva.horario}")
+                            Text(reserva.motivo, style = MaterialTheme.typography.bodyMedium)
+
+                        }
                     }
                 }
             }
