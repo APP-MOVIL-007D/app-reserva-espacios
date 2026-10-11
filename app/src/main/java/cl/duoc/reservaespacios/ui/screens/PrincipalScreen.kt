@@ -66,10 +66,13 @@ fun PrincipalScreen() {
             }
         }
     ) { innerPadding ->
-        Text(
-            text = "Pantalla de $actualTab",
-            modifier = Modifier.padding(innerPadding)
-        )
+        val modifier = Modifier.padding(innerPadding)
+        when (actualTab) {
+            "Calendario" -> MisReservasScreen(modifier)
+            else -> Text("Pantalla de $actualTab", modifier)
+        }
+
+
     }
 }
 
