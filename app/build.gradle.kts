@@ -36,6 +36,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.gson)
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.compose.material.icons)
     implementation(platform(libs.androidx.compose.bom))
