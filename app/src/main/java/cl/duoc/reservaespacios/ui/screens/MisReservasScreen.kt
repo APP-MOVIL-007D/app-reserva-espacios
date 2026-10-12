@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.model.reservasDePrueba
 
@@ -63,9 +66,20 @@ fun MisReservasScreen(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodyMedium
             )
         } else {
-
             LazyColumn {
                 items(reservasFiltradas) { reserva ->
+
+                    val colorFondo = when (reserva.estado) {
+                        "Aprobada" -> Color(0xFFD0E6C0)
+                        "Rechazada" -> Color(0xFFF4C8BB)
+                        else -> Color(0xFFFFF1CC)
+                    }
+
+                    val colorTexto = when (reserva.estado) {
+                        "Aprobada" -> Color(0xFF31570E)
+                        "Rechazada" -> Color(0xFF802F1A)
+                        else -> Color(0xFF8A5A00)
+                    }
 
                     Card(
                         modifier = Modifier
@@ -73,7 +87,15 @@ fun MisReservasScreen(modifier: Modifier = Modifier) {
                             .padding(bottom = 12.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text(reserva.estado, style = MaterialTheme.typography.labelMedium)
+                            Surface(color = colorFondo, shape = RoundedCornerShape(50)) {
+                                Text(
+                                    reserva.estado,
+                                    color = colorTexto,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
                             Text(reserva.espacio, style = MaterialTheme.typography.titleMedium)
                             Text("${reserva.fecha} · ${reserva.horario}")
                             Text(reserva.motivo, style = MaterialTheme.typography.bodyMedium)
