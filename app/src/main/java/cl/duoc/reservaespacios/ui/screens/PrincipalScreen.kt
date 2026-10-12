@@ -1,5 +1,6 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
+import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
 
 //data class de pestaña
 data class Pestana(
@@ -44,7 +46,7 @@ val pestanas = listOf(
 )
 
 @Composable
-fun PrincipalScreen() {
+fun PrincipalScreen(reservasViewModel: ReservasViewModel) {
 
     var actualTab by remember { mutableStateOf("Inicio") }
 
@@ -68,7 +70,7 @@ fun PrincipalScreen() {
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
         when (actualTab) {
-            "Calendario" -> MisReservasScreen(modifier)
+            "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             else -> Text("Pantalla de $actualTab", modifier)
         }
 
@@ -76,10 +78,11 @@ fun PrincipalScreen() {
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PrincipalScreenPreview() {
     ReservaEspaciosTheme {
-        PrincipalScreen()
+        PrincipalScreen(reservasViewModel = ReservasViewModel())
     }
 }

@@ -12,7 +12,7 @@ data class Reserva(
 )
 
     val reservasDePrueba = listOf(
-        Reserva(1,"Sala 604", "20/10", "10:01 - 11:20", "Clase de proyecto", "Aprobada"),
-        Reserva(2,"Sala 134", "21/12", "09:01 - 12:20", "Clase de programación", "Rechazada"),
-        Reserva(3,"Sala LC13", "09/09", "08:01 - 15:20", "Clase de algo", "Pendiente")
+        Reserva(1,"Sala S41", "20/10", "10:01 - 11:20", "Clase de proyecto", "Aprobada"),
+        Reserva(2,"Sala Estudio Sonido 1", "21/12", "09:01 - 12:20", "Clase de Sonido", "Rechazada"),
+        Reserva(3,"Sala LC13", "09/09", "08:01 - 09:20", "Clase de algo", "Pendiente")
     )

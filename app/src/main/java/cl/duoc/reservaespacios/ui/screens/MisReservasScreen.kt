@@ -23,10 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cl.duoc.reservaespacios.model.reservasDePrueba
+import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
 
 @Composable
-fun MisReservasScreen(modifier: Modifier = Modifier) {
+fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier) {
 
     val pestanasReserva = listOf("Pendientes", "Aprobadas", "Historial")
     var pestanaActual by remember { mutableIntStateOf(0) }
@@ -37,7 +37,7 @@ fun MisReservasScreen(modifier: Modifier = Modifier) {
         else -> "Rechazada"
     }
 
-    val reservasFiltradas = reservasDePrueba.filter { it.estado == estadoBuscado }
+    val reservasFiltradas = reservasViewModel.reservas.filter { it.estado == estadoBuscado }
 
     Column(
         modifier
