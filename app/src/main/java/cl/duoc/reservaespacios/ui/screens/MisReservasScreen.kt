@@ -77,14 +77,14 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                     val colorFondo = when (reserva.estado) {
                         "Aprobada" -> Color(0xFFD0E6C0)
                         "Rechazada" -> Color(0xFFF4C8BB)
-                        "Cancelada" -> Color(0xFFE0E0E0)
+                        "Cancelada" -> Color(0xFF5F6368)
                         else -> Color(0xFFFFF1CC)
                     }
 
                     val colorTexto = when (reserva.estado) {
                         "Aprobada" -> Color(0xFF31570E)
                         "Rechazada" -> Color(0xFF802F1A)
-                        "Cancelada" -> Color(0xFF555555)
+                        "Cancelada" -> Color.White
                         else -> Color(0xFF8A5A00)
                     }
 
