@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
@@ -37,7 +39,10 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
         else -> "Rechazada"
     }
 
-    val reservasFiltradas = reservasViewModel.reservas.filter { it.estado == estadoBuscado }
+    val reservasFiltradas = reservasViewModel.reservas.filter {
+        if (pestanaActual == 2) it.estado == "Rechazada" || it.estado == "Cancelada"
+        else it.estado == estadoBuscado
+    }
 
     Column(
         modifier
@@ -72,12 +77,14 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                     val colorFondo = when (reserva.estado) {
                         "Aprobada" -> Color(0xFFD0E6C0)
                         "Rechazada" -> Color(0xFFF4C8BB)
+                        "Cancelada" -> Color(0xFFE0E0E0)
                         else -> Color(0xFFFFF1CC)
                     }
 
                     val colorTexto = when (reserva.estado) {
                         "Aprobada" -> Color(0xFF31570E)
                         "Rechazada" -> Color(0xFF802F1A)
+                        "Cancelada" -> Color(0xFF555555)
                         else -> Color(0xFF8A5A00)
                     }
 
@@ -99,6 +106,15 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                             Text(reserva.espacio, style = MaterialTheme.typography.titleMedium)
                             Text("${reserva.fecha} · ${reserva.horario}")
                             Text(reserva.motivo, style = MaterialTheme.typography.bodyMedium)
+                            if (reserva.estado == "Pendiente" || reserva.estado == "Aprobada") {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedButton(
+                                    onClick = { reservasViewModel.cancelar(reserva) },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("Cancelar")
+                                }
+                            }
 
                         }
                     }

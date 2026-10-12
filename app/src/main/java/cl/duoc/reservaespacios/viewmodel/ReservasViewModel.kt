@@ -11,4 +11,18 @@ class ReservasViewModel : ViewModel() {
     init{
         reservas.addAll(reservasDePrueba)
     }
+
+    fun cancelar(reserva: Reserva){
+        val index = reservas.indexOfFirst { it.id == reserva.id }
+        reservas[index] = reserva.copy(estado = "Cancelada")
+    }
+    fun aprobar(reserva: Reserva){
+        val index = reservas.indexOfFirst { it.id == reserva.id }
+        reservas[index] = reserva.copy(estado = "Aprobada")
+    }
+
+    fun rechazar(reserva: Reserva){
+        val index = reservas.indexOfFirst { it.id == reserva.id }
+        reservas[index] = reserva.copy(estado = "Rechazada")
+    }
 }
