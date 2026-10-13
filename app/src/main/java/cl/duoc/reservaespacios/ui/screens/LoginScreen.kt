@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
+import cl.duoc.reservaespacios.ui.componentes.CampoPassword
 import cl.duoc.reservaespacios.utils.validarCorreo
 import cl.duoc.reservaespacios.utils.validarPassword
 
@@ -47,7 +48,6 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
 
         //hay q cambiar esto pq el logo lo agarra del modo oscuro del sistema, falta opción
         //menu en la pantalla menú donde se pueda cambiar.
@@ -89,21 +89,12 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = {
+        CampoPassword(
+            value = password, onValueChange = {
                 password = it
                 errorPassword = null
             },
-            visualTransformation = PasswordVisualTransformation(),
-            label = { Text("Contraseña") },
-            isError = errorPassword != null,
-            supportingText = { errorPassword?.let { Text(it) } },
-            trailingIcon = {
-                if (errorPassword != null) Icon(
-                    Icons.Filled.Warning, contentDescription = "Error"
-                )
-            },
+            errorTexto = errorPassword,
             modifier = Modifier.fillMaxWidth()
         )
 
