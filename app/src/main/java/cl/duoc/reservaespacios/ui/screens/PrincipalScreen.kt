@@ -68,6 +68,7 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
         when (actualTab) {
+            "Inicio" -> InicioScreen(reservasViewModel,modifier)
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Espacios" -> EspacioScreen(navController, modifier)
             else -> Text("Pantalla de $actualTab", modifier)
