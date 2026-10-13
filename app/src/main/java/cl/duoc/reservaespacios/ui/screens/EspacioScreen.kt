@@ -20,16 +20,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 
 data class Sala(val nombre: String, val capacidad: Int)
 
 @Composable
-fun EspacioScreen (navController: NavController, modifier: Modifier = Modifier){
+fun EspacioScreen(navController: NavController, modifier: Modifier = Modifier) {
 
     var buscarEspacio by remember { mutableStateOf("") }
 
@@ -43,21 +40,21 @@ fun EspacioScreen (navController: NavController, modifier: Modifier = Modifier){
     )
 
     val espaciosFiltrados = listaEspacios.filter {
-        it.nombre.contains(buscarEspacio, ignoreCase = true) }
+        it.nombre.contains(buscarEspacio, ignoreCase = true)
+    }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(all = 24.dp))
+            .padding(all = 16.dp)
+    )
     {
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-    Text(
-        text = "Espacios",
-        style = MaterialTheme.typography.headlineMedium,
-        color = Color.Black,
-    )
+        Text(
+            text = "Espacios",
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color.Black,
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -70,7 +67,7 @@ fun EspacioScreen (navController: NavController, modifier: Modifier = Modifier){
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Cantidad de espacios disponibles: ${listaEspacios.size}",
+            text = "Cantidad de espacios disponibles: ${espaciosFiltrados.size}",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Black
         )

@@ -1,6 +1,5 @@
 package cl.duoc.reservaespacios.ui.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -27,12 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import cl.duoc.reservaespacios.R
-import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 import cl.duoc.reservaespacios.utils.validarCorreo
 import cl.duoc.reservaespacios.utils.validarPassword
 
@@ -52,6 +48,9 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
 
+
+        //hay q cambiar esto pq el logo lo agarra del modo oscuro del sistema, falta opción
+        //menu en la pantalla menú donde se pueda cambiar.
         val logo =
             (if (isSystemInDarkTheme()) R.drawable.logo_sede_tema_oscuro else R.drawable.logo_sede_tema_claro)
 
@@ -133,10 +132,4 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun LoginScreenPreview() {
-    ReservaEspaciosTheme {
-        LoginScreen(navController = rememberNavController())
-    }
-}
+//borré el preview q estaba acá
