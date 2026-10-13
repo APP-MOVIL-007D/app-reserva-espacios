@@ -44,7 +44,7 @@ val pestanas = listOf(
 )
 
 @Composable
-fun PrincipalScreen(navController : NavController, reservasViewModel: ReservasViewModel) {
+fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavController) {
 
     var actualTab by remember { mutableStateOf("Inicio") }
 
@@ -76,5 +76,3 @@ fun PrincipalScreen(navController : NavController, reservasViewModel: ReservasVi
 
     }
 }
-
-//quite el preview q estaba acá
