@@ -70,8 +70,10 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
         when (actualTab) {
             "Inicio" -> InicioScreen(reservasViewModel,modifier)
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
+            "Notificaciones" -> NotificacionScreen(navController, modifier)
+            "Menu" -> MenuScreen(navController)
             "Espacios" -> EspacioScreen(navController, modifier)
-            else -> Text("Pantalla de $actualTab", modifier)
+
         }
 
 
