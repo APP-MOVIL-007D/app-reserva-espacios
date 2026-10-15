@@ -29,7 +29,11 @@ import androidx.navigation.NavController
 import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
 
 @Composable
-fun SolicitarReservaScreen(navController: NavController, reservasViewModel: ReservasViewModel, espacioParam: String = "") {
+fun SolicitarReservaScreen(
+    navController: NavController,
+    reservasViewModel: ReservasViewModel,
+    espacioParam: String = ""
+) {
 
     var fecha by remember { mutableStateOf("") }
     var horario by remember { mutableStateOf("") }
@@ -91,6 +95,7 @@ fun SolicitarReservaScreen(navController: NavController, reservasViewModel: Rese
         Button(
             onClick = {
                 reservasViewModel.agregarReserva(espacio, fecha, horario, motivo)
+                reservasViewModel.pestanaActual = "Calendario"
                 navController.popBackStack()
             },
             modifier = Modifier.fillMaxWidth()

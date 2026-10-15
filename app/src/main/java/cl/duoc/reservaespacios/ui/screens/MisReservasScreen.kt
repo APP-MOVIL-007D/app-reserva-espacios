@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -16,15 +17,17 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
 
 @Composable
@@ -32,6 +35,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
 
     val pestanasReserva = listOf("Pendientes", "Aprobadas", "Historial")
     var pestanaActual by remember { mutableIntStateOf(0) }
+    var reservaACancelar by remember { mutableStateOf<Reserva?> (null) }
 
     val estadoBuscado = when (pestanaActual) {
         0 -> "Pendiente"
@@ -109,7 +113,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                             if (reserva.estado == "Pendiente" || reserva.estado == "Aprobada") {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 OutlinedButton(
-                                    onClick = { reservasViewModel.cancelar(reserva) },
+                                    onClick = { reservaACancelar = reserva},
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text("Cancelar")
@@ -121,6 +125,22 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                 }
             }
         }
+    }
+    reservaACancelar?.let { reserva: Reserva ->
+        AlertDialog(
+            onDismissRequest = { reservaACancelar = null },
+            title = { Text("Cancelar reserva") },
+            text = { Text("¿Seguro que quieres cancelar la reserva de ${reserva.espacio} el ${reserva.fecha}?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    reservasViewModel.cancelar(reserva)
+                    reservaACancelar = null
+                }) { Text("Sí, cancelar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { reservaACancelar = null }) { Text("No") }
+            }
+        )
     }
 
 

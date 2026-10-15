@@ -1,5 +1,6 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -24,8 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
@@ -40,6 +41,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
     var password by remember { mutableStateOf("") }
     var errorCorreo by remember { mutableStateOf<String?>(null) }
     var errorPassword by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
     Column(
         modifier
@@ -106,6 +108,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
                 errorCorreo = validarCorreo(correo)
                 errorPassword = validarPassword(password)
                 if (errorCorreo == null && errorPassword == null) {
+                    Toast.makeText(context, "Bienvenido/a", Toast.LENGTH_SHORT).show()
                     navController.navigate("principal") {
                         popUpTo("login") { inclusive = true }
                     }

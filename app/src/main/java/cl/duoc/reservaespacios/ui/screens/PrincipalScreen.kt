@@ -46,18 +46,16 @@ val pestanas = listOf(
 @Composable
 fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavController) {
 
-    var actualTab by remember { mutableStateOf("Inicio") }
-
     Scaffold(
         bottomBar = {
             NavigationBar {
                 pestanas.forEach { pestana ->
                     NavigationBarItem(
-                        selected = actualTab == pestana.nombre,
-                        onClick = { actualTab = pestana.nombre },
+                        selected = reservasViewModel.pestanaActual == pestana.nombre,
+                        onClick = { reservasViewModel.pestanaActual = pestana.nombre },
                         icon = {
                             Icon(
-                                imageVector = if (actualTab == pestana.nombre) pestana.iconoFull else pestana.iconoVacio,
+                                imageVector = if (reservasViewModel.pestanaActual == pestana.nombre) pestana.iconoFull else pestana.iconoVacio,
                                 contentDescription = pestana.nombre
                             )
                         }
@@ -67,7 +65,7 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
         }
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
-        when (actualTab) {
+        when (reservasViewModel.pestanaActual) {
             "Inicio" -> InicioScreen(reservasViewModel,modifier)
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Notificaciones" -> NotificacionScreen(navController, modifier)

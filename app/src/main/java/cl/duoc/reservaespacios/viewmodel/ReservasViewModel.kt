@@ -1,7 +1,10 @@
 package cl.duoc.reservaespacios.viewmodel
 
 import android.app.Application
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cl.duoc.reservaespacios.data.DataStoreManager
@@ -12,6 +15,7 @@ import kotlinx.coroutines.launch
 class ReservasViewModel(application: Application): AndroidViewModel(application) {
     val reservas = mutableStateListOf<Reserva>()
     private val dataStore = DataStoreManager(application)
+    var pestanaActual by mutableStateOf("Inicio")
 
     init {
 
