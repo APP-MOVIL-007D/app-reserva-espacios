@@ -69,7 +69,7 @@ fun PrincipalScreen(navController : NavController, reservasViewModel: ReservasVi
         val modifier = Modifier.padding(innerPadding)
         when (actualTab) {
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
-            "Espacios" -> EspacioScreen(navController, modifier)
+            "Espacios" -> EspacioScreen(navController, reservasViewModel, modifier)
             else -> Text("Pantalla de $actualTab", modifier)
         }
 

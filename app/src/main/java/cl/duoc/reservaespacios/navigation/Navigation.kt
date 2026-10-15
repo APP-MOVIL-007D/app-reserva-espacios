@@ -21,7 +21,17 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
         }
         composable("solicitarReserva"){
             SolicitarReservaScreen(navController = navController, reservasViewModel = reservasViewModel)
+
         }
+        composable("solicitarReserva/{espacio}") { backStackEntry ->
+            val espacioSeleccionado = backStackEntry.arguments?.getString("espacio") ?: ""
+            SolicitarReservaScreen(
+                navController = navController,
+                reservasViewModel = reservasViewModel,
+                espacioParam = espacioSeleccionado
+            )
+    }
+
     }
 
 }

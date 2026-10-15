@@ -29,12 +29,12 @@ import androidx.navigation.NavController
 import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
 
 @Composable
-fun SolicitarReservaScreen(navController: NavController, reservasViewModel: ReservasViewModel) {
+fun SolicitarReservaScreen(navController: NavController, reservasViewModel: ReservasViewModel, espacioParam: String = "") {
 
     var fecha by remember { mutableStateOf("") }
     var horario by remember { mutableStateOf("") }
     var motivo by remember { mutableStateOf("") }
-    var espacio by remember { mutableStateOf("") }
+    var espacio by remember { mutableStateOf(espacioParam) }
 
     Column(
         modifier = Modifier
