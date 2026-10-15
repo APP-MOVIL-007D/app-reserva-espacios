@@ -72,7 +72,7 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Notificaciones" -> NotificacionScreen(navController, modifier)
             "Menu" -> MenuScreen(navController)
-            "Espacios" -> EspacioScreen(navController, modifier)
+            "Espacios" -> EspacioScreen(navController, reservasViewModel, modifier)
 
         }
 
