@@ -95,6 +95,8 @@ fun EspacioScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
+            //acá debería ser como espacios encontrados, pq estai filtrando
+            // lo q pone el usuario, no los espacios disponibles
             text = "Cantidad de espacios disponibles: ${espaciosFiltrados.size}",
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -103,6 +105,10 @@ fun EspacioScreenContent(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(espaciosFiltrados) { espacio ->
 
+
+                //el estado viene de misreservas entonces no considera la fecha ni el bloque
+                // si por ejemplo una lc4 esta aprobada en una fecha x, aparecería siempre aprobada
+                //
                 val reservaActual = reservas.find {
                     it.espacio == espacio.nombre && (it.estado == "Pendiente" || it.estado == "Aprobada")
                 }
@@ -156,13 +162,16 @@ fun EspacioScreenContent(
                         if (reservaActual != null) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "${reservaActual.motivo}",
+                                text = reservaActual.motivo,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
 
+
+                        //Siento q la tarjeta en si ya muestra la info, entoncees estaría bueno
+                        //dejar solamente el solicitar reserva, pq es hacía donde navega
                         OutlinedButton(
                             onClick = { onNavigateToSolicitarReserva(espacio.nombre) },
                             modifier = Modifier.fillMaxWidth()
