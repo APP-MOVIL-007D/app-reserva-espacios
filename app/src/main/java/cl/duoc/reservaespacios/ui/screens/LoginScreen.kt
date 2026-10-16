@@ -31,11 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
 import cl.duoc.reservaespacios.ui.componentes.CampoPassword
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.utils.validarCorreo
 import cl.duoc.reservaespacios.utils.validarPassword
 
 @Composable
-fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
+fun LoginScreen(reservasViewModel: ReservasViewModel, navController: NavController, modifier: Modifier = Modifier) {
 
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -108,6 +109,7 @@ fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
                 errorCorreo = validarCorreo(correo)
                 errorPassword = validarPassword(password)
                 if (errorCorreo == null && errorPassword == null) {
+                    reservasViewModel.correoUsuario = correo
                     Toast.makeText(context, "Bienvenido/a", Toast.LENGTH_SHORT).show()
                     navController.navigate("principal") {
                         popUpTo("login") { inclusive = true }

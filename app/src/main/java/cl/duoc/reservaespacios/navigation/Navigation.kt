@@ -14,7 +14,7 @@ import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasViewModel){
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
-            LoginScreen(navController = navController)
+            LoginScreen(navController = navController, reservasViewModel = reservasViewModel)
         }
         composable("principal") {
             PrincipalScreen(navController = navController, reservasViewModel = reservasViewModel)

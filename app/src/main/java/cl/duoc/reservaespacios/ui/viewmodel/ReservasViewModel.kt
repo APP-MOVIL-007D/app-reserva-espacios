@@ -10,12 +10,21 @@ import androidx.lifecycle.viewModelScope
 import cl.duoc.reservaespacios.data.DataStoreManager
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.model.reservasDePrueba
+import cl.duoc.reservaespacios.model.usuariosDePrueba
 import kotlinx.coroutines.launch
 
 class ReservasViewModel(application: Application): AndroidViewModel(application) {
     val reservas = mutableStateListOf<Reserva>()
     private val dataStore = DataStoreManager(application)
     var pestanaActual by mutableStateOf("Inicio")
+
+    var correoUsuario by mutableStateOf("")
+
+    val nombreUsuario: String get() = usuariosDePrueba.find { it.correo.equals(correoUsuario, ignoreCase = true) } ?.nombre ?: ""
+
+    val inicialesUsuario : String get() = correoUsuario.substringBefore("@").split(".").take(2).joinToString("") { it.take(1).uppercase()}
+
+    val rolUsuario: String get() = if(correoUsuario.lowercase().endsWith("@profesor.duoc.cl")) "Docente" else "Administrativo"
 
     init {
 
