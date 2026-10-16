@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import cl.duoc.reservaespacios.ui.screens.LoginScreen
 import cl.duoc.reservaespacios.ui.screens.PrincipalScreen
 import cl.duoc.reservaespacios.ui.screens.SolicitarReservaScreen
-import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 
 @Composable

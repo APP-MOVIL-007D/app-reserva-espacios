@@ -12,15 +12,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
+import java.util.Calendar
 
 @Composable
 fun InicioScreen(reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier){
     val proxima = reservasViewModel.reservas.firstOrNull {it.estado == "Aprobada" }
+    val hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    //localtime no esta en android 7
+    val saludo = when(hora){
+        in 5..11 -> "Buenos días"
+        in 12..19 -> "Buenas tardes"
+        else -> "Buenas noches"
+    }
+
+    val pendientes = reservasViewModel.reservas.count { it.estado == "Pendiente"}
+    val aprobadas = reservasViewModel.reservas.count { it.estado == "Aprobada"}
 
     Column(modifier.fillMaxSize().padding(16.dp)) {
-        Text("Hola Nicolás", style = MaterialTheme.typography.headlineMedium)
-        Text("Bienvenido a esta app fea", style = MaterialTheme.typography.bodyMedium)
+        Text(saludo, style = MaterialTheme.typography.headlineMedium)
+        Text("Tienes $pendientes y $aprobadas aprobadas", style = MaterialTheme.typography.bodyMedium)
 
         if(proxima != null){
             Spacer(modifier = Modifier.height(24.dp))

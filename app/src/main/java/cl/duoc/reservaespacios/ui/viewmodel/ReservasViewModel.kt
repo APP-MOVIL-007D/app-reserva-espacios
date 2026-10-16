@@ -1,4 +1,4 @@
-package cl.duoc.reservaespacios.viewmodel
+package cl.duoc.reservaespacios.ui.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.getValue

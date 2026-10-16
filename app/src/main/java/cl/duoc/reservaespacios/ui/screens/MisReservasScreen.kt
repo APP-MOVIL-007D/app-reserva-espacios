@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.model.Reserva
-import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
 fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier) {

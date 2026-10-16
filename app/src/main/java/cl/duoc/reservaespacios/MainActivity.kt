@@ -12,7 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import cl.duoc.reservaespacios.navigation.AppNavigation
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
-import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

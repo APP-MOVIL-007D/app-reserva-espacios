@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -27,10 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 import cl.duoc.reservaespacios.model.Reserva
-import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 data class Sala(val nombre: String, val capacidad: Int)
 
