@@ -73,7 +73,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = viewMode
         Text(
             text = "Mi Perfil",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 48.dp)
+            modifier = Modifier.padding(bottom = 80.dp)
         )
 
         Surface(
@@ -102,7 +102,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = viewMode
             text = uiState.correo
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = viewModel::pedirCerrarSesion
