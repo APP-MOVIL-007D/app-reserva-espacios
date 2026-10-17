@@ -12,10 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -95,9 +91,7 @@ fun EspacioScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            //acá debería ser como espacios encontrados, pq estai filtrando
-            // lo q pone el usuario, no los espacios disponibles
-            text = "Cantidad de espacios disponibles: ${espaciosFiltrados.size}",
+            text = "Espacios encontrados: ${espaciosFiltrados.size}",
             style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -105,13 +99,10 @@ fun EspacioScreenContent(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(espaciosFiltrados) { espacio ->
 
-
-                //el estado viene de misreservas entonces no considera la fecha ni el bloque
-                // si por ejemplo una lc4 esta aprobada en una fecha x, aparecería siempre aprobada
-                //
-                val reservaActual = reservas.find {
-                    it.espacio == espacio.nombre && (it.estado == "Pendiente" || it.estado == "Aprobada")
+                val reservaActiva = reservas.find {
+                    it.espacio == espacio.nombre && (it.estado == "Aprobada" || it.estado == "Pendiente")
                 }
+                val estaOcupado = reservaActiva != null
 
                 Card(
                     modifier = Modifier
@@ -126,56 +117,17 @@ fun EspacioScreenContent(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "Capacidad de espacio: ${espacio.capacidad}",
+                            text = "Capacidad de personas: ${espacio.capacidad}",
                             style = MaterialTheme.typography.bodySmall,
                         )
 
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        val estado = reservaActual?.estado ?: "Disponible"
-                        
-                        val colorFondo = when (estado) {
-                            "Aprobada" -> Color(0xFFD0E6C0)
-                            "Rechazada" -> Color(0xFFF4C8BB)
-                            "Cancelada" -> Color(0xFF5F6368)
-                            "Disponible" -> Color(0xFFE6ECC2)
-                            else -> Color(0xFFFFF1CC)
-                        }
-    
-                        val colorTexto = when (estado) {
-                            "Aprobada" -> Color(0xFF31570E)
-                            "Rechazada" -> Color(0xFF802F1A)
-                            "Cancelada" -> Color.White
-                            "Disponible" -> Color.DarkGray
-                            else -> Color(0xFF8A5A00)
-                        }
-
-                        Surface(color = colorFondo, shape = RoundedCornerShape(50)) {
-                            Text(
-                                text = estado,
-                                color = colorTexto,
-                                style = MaterialTheme.typography.labelMedium,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                            )
-                        }
-                        
-                        if (reservaActual != null) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = reservaActual.motivo,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-
                         Spacer(modifier = Modifier.height(12.dp))
 
-
-                        //Siento q la tarjeta en si ya muestra la info, entoncees estaría bueno
-                        //dejar solamente el solicitar reserva, pq es hacía donde navega
-                        OutlinedButton(
+                        Button(
                             onClick = { onNavigateToSolicitarReserva(espacio.nombre) },
+                            enabled = !estaOcupado,
                             modifier = Modifier.fillMaxWidth()
-                        ) { Text("Ver disponibilidad / Solicitar") }
+                        ) { Text(if (estaOcupado) "El espacio ya está en uso" else "Solicitar reserva") }
                     }
                 }
             }
