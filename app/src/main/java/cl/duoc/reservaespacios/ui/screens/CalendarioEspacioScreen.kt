@@ -3,9 +3,11 @@ package cl.duoc.reservaespacios.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,9 @@ import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.model.Reserva
 import androidx.compose.ui.tooling.preview.Preview
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
+import java.util.Calendar
+import java.util.Locale
+import java.text.SimpleDateFormat
 
 data class DiaSemana(val nombre: String, val numero: Int, val fechaCompleta: String)
 data class Bloque(val horaInicio: String, val horaFin: String)
@@ -53,14 +58,35 @@ fun CalendarioEspacioScreenContent(
     onSolicitarReserva: () -> Unit
 ) {
     var fechaSeleccionada by remember { mutableStateOf("2026-10-20") }
-    
-    val diasBase = listOf(
-        DiaSemana("Lun", 19, "2026-10-19"),
-        DiaSemana("Mar", 20, "2026-10-20"),
-        DiaSemana("Mié", 21, "2026-10-21"),
-        DiaSemana("Jue", 22, "2026-10-22"),
-        DiaSemana("Vie", 23, "2026-10-23")
-    )
+    var mesActualOffset by remember { mutableIntStateOf(0) }
+
+    val calendario = Calendar.getInstance().apply {
+        set(Calendar.YEAR, 2026)
+        set(Calendar.MONTH, Calendar.OCTOBER)
+        set(Calendar.DAY_OF_MONTH, 1)
+        add(Calendar.MONTH, mesActualOffset)
+    }
+
+    val locCl = Locale.forLanguageTag("es-CL")
+    val mesFormat = SimpleDateFormat("MMMM yyyy", locCl)
+    val textoMesAnio = mesFormat.format(calendario.time).replaceFirstChar { it.uppercase() }
+
+    val diasDelMes = calendario.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val anioActual = calendario.get(Calendar.YEAR)
+    val mesActual = calendario.get(Calendar.MONTH) + 1
+
+    val diasBase = (1..diasDelMes).map { dia ->
+        val calDia = Calendar.getInstance().apply {
+            set(Calendar.YEAR, anioActual)
+            set(Calendar.MONTH, mesActual - 1)
+            set(Calendar.DAY_OF_MONTH, dia)
+        }
+        val diaFormat = SimpleDateFormat("EEE", locCl)
+        val nombre = diaFormat.format(calDia.time).replaceFirstChar { it.uppercase() }.take(3).replace(".", "")
+        val diaStr = dia.toString().padStart(2, '0')
+        val mesStr = mesActual.toString().padStart(2, '0')
+        DiaSemana(nombre, dia, "$anioActual-$mesStr-$diaStr")
+    }
 
     val bloquesBase = listOf(
         Bloque("08:31", "09:50"),
@@ -97,32 +123,38 @@ fun CalendarioEspacioScreenContent(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                // Mes y controles
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Octubre 2026",
+                        text = textoMesAnio,
                         style = MaterialTheme.typography.titleMedium
                     )
                     Row {
-                        IconButton(onClick = { }) {
+                        IconButton(
+                            onClick = { mesActualOffset-- },
+                            enabled = mesActualOffset > -9
+                        ) {
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Atras")
                         }
-                        IconButton(onClick = { }) {
+                        IconButton(
+                            onClick = { mesActualOffset++ },
+                            enabled = mesActualOffset < 2
+                        ) {
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Adelante")
                         }
                     }
                 }
                 
-                // Línea separadora usando el color secundario del tema
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), thickness = 2.dp, color = MaterialTheme.colorScheme.secondary)
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     for (dia in diasBase) {
                         val esSeleccionado = dia.fechaCompleta == fechaSeleccionada
@@ -256,6 +288,8 @@ fun CalendarioEspacioScreenContent(
     }
 }
 
+/*
+
 @Preview(showBackground = true)
 @Composable
 fun CalendarioEspacioScreenPreview() {
@@ -285,3 +319,5 @@ fun CalendarioEspacioScreenPreview() {
         )
     }
 }
+
+ */

@@ -134,6 +134,7 @@ fun EspacioScreenContent(
         }
     }
 }
+/*
 
 @Preview(showBackground = true)
 @Composable
@@ -149,6 +150,7 @@ fun EspacioScreenPreview() {
     }
 }
 
+*/
 
 
 
