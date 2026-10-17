@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cl.duoc.reservaespacios.data.DataStoreManager
 import cl.duoc.reservaespacios.model.Reserva
+import cl.duoc.reservaespacios.model.Usuario
 import cl.duoc.reservaespacios.model.reservasDePrueba
 import cl.duoc.reservaespacios.model.usuariosDePrueba
 import kotlinx.coroutines.launch
@@ -20,9 +21,19 @@ class ReservasViewModel(application: Application): AndroidViewModel(application)
 
     var correoUsuario by mutableStateOf("")
 
-    val nombreUsuario: String get() = usuariosDePrueba.find { it.correo.equals(correoUsuario, ignoreCase = true) } ?.nombre ?: ""
+    val usuarioActual : Usuario? get() = usuariosDePrueba.find { it.correo.equals(correoUsuario, ignoreCase = true)}
 
-    val inicialesUsuario : String get() = correoUsuario.substringBefore("@").split(".").take(2).joinToString("") { it.take(1).uppercase()}
+    val nombreUsuario: String get() = usuarioActual?.nombre ?: ""
+
+    val inicialesUsuario : String get() {
+        val usuario = usuarioActual
+        return if (usuario != null){
+            (usuario.nombre.take(1) + usuario.apellido.take(1)).uppercase()
+        }
+        else{
+            correoUsuario.substringBefore("@").split(".").take(2).joinToString("") { it.take(1).uppercase()}
+        }
+    }
 
     val rolUsuario: String get() = if(correoUsuario.lowercase().endsWith("@profesor.duoc.cl")) "Docente" else "Administrativo"
 
