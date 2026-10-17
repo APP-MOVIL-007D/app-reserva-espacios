@@ -109,7 +109,7 @@ fun LoginScreen(reservasViewModel: ReservasViewModel, navController: NavControll
                 errorCorreo = validarCorreo(correo)
                 errorPassword = validarPassword(password)
                 if (errorCorreo == null && errorPassword == null) {
-                    reservasViewModel.correoUsuario = correo
+                    reservasViewModel.correoUsuario = correo.trim().lowercase()
                     Toast.makeText(context, "Bienvenido/a", Toast.LENGTH_SHORT).show()
                     navController.navigate("principal") {
                         popUpTo("login") { inclusive = true }
