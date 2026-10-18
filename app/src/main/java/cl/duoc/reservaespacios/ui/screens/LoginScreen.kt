@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
@@ -42,6 +46,7 @@ fun LoginScreen(reservasViewModel: ReservasViewModel, navController: NavControll
     var password by remember { mutableStateOf("") }
     var errorCorreo by remember { mutableStateOf<String?>(null) }
     var errorPassword by remember { mutableStateOf<String?>(null) }
+    var mostrarRecuperar by remember {mutableStateOf(false)}
     val context = LocalContext.current
 
     Column(
@@ -122,10 +127,30 @@ fun LoginScreen(reservasViewModel: ReservasViewModel, navController: NavControll
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "¿Olvidaste tu contraseña?", style = MaterialTheme.typography.bodyMedium
+        TextButton(onClick = { mostrarRecuperar = true}){
+            Text("¿Olvidaste tu contraseña?")
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+        Text("Acceso con tu cuenta institucional Duoc UC",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+
+    if(mostrarRecuperar){
+        AlertDialog(
+            onDismissRequest = {mostrarRecuperar= false},
+            icon = {Icon(Icons.Filled.Lock, contentDescription = null)},
+            title = {Text("¿Olvidaste tu contraseña?", textAlign = TextAlign.Center)},
+            text = { Text("Tu contraseña es la misma de tu cuenta Duoc UC. " +
+                    "Para recuperarla, tienes que contactar con servicios digitales.",
+                textAlign = TextAlign.Center)},
+            confirmButton = {
+                TextButton(onClick = { mostrarRecuperar = false }){
+                    Text("Entendido")
+                }
+            }
+
         )
     }
 }
-
-//borré el preview q estaba acá
