@@ -99,11 +99,6 @@ fun EspacioScreenContent(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(espaciosFiltrados) { espacio ->
 
-                val reservaActiva = reservas.find {
-                    it.espacio == espacio.nombre && (it.estado == "Aprobada" || it.estado == "Pendiente")
-                }
-                val estaOcupado = reservaActiva != null
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -125,9 +120,8 @@ fun EspacioScreenContent(
 
                         Button(
                             onClick = { onNavigateToSolicitarReserva(espacio.nombre) },
-                            enabled = !estaOcupado,
                             modifier = Modifier.fillMaxWidth()
-                        ) { Text(if (estaOcupado) "El espacio ya está en uso" else "Solicitar espacio") }
+                        ) { Text("Ver Calendario") }
                     }
                 }
             }

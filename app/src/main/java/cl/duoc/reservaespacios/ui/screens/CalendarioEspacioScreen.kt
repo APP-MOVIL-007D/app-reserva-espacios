@@ -200,9 +200,11 @@ fun CalendarioEspacioScreenContent(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(bloquesBase) { bloque ->
                 
+                val horarioBloque = "${bloque.horaInicio} - ${bloque.horaFin}"
                 val reservaEncontrada = reservas.find {
                     it.espacio == espacioNombre && 
                     it.fecha == fechaSeleccionada && 
+                    it.horario == horarioBloque &&
                     (it.estado == "Pendiente" || it.estado == "Aprobada")
                 }
 
