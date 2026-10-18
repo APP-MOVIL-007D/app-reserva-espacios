@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import cl.duoc.reservaespacios.ui.screens.LoginScreen
 import cl.duoc.reservaespacios.ui.screens.PrincipalScreen
 import cl.duoc.reservaespacios.ui.screens.SolicitarReservaScreen
+import cl.duoc.reservaespacios.ui.screens.CalendarioEspacioScreen
 import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
 
 
@@ -30,7 +31,15 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
                 reservasViewModel = reservasViewModel,
                 espacioParam = espacioSeleccionado
             )
-    }
+        }
+        composable("calendarioEspacio/{espacio}") { backStackEntry ->
+            val espacioSeleccionado = backStackEntry.arguments?.getString("espacio") ?: ""
+            CalendarioEspacioScreen(
+                navController = navController,
+                reservasViewModel = reservasViewModel,
+                espacioNombre = espacioSeleccionado
+            )
+        }
 
     }
 
