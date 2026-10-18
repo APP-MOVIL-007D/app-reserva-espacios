@@ -35,7 +35,7 @@ fun EspacioScreen(navController: NavController, reservasViewModel: ReservasViewM
     EspacioScreenContent(
         reservas = reservasViewModel.reservas,
         onNavigateToSolicitarReserva = { espacioNombre ->
-            navController.navigate("solicitarReserva/$espacioNombre")
+            navController.navigate("calendarioEspacio/$espacioNombre")
         },
         modifier = modifier
     )
@@ -127,7 +127,7 @@ fun EspacioScreenContent(
                             onClick = { onNavigateToSolicitarReserva(espacio.nombre) },
                             enabled = !estaOcupado,
                             modifier = Modifier.fillMaxWidth()
-                        ) { Text(if (estaOcupado) "El espacio ya está en uso" else "Solicitar reserva") }
+                        ) { Text(if (estaOcupado) "El espacio ya está en uso" else "Solicitar espacio") }
                     }
                 }
             }
