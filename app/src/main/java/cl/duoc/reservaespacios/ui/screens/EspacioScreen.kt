@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -18,10 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
@@ -41,16 +40,19 @@ fun EspacioScreen(navController: NavController, reservasViewModel: ReservasViewM
 @Composable
 fun EspacioScreenContent(
     reservas: List<Reserva>,
+    //ahora lleva al clendario, no a solicitar
     onNavigateToSolicitarReserva: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var buscarEspacio by remember { mutableStateOf("") }
 
 
+    //estan buenos los ejemplos, pero creo q es mejor guiarnos por el mapa de la sede
     val espaciosBase = listOf(
         Sala("Sala 01", 30),
         Sala("Sala 02", 25)
     )
+
 
     val espaciosDesdeDB = reservas
         .map { it.espacio }

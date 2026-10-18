@@ -24,11 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import cl.duoc.reservaespacios.viewmodel.ReservasViewModel
-
 import cl.duoc.reservaespacios.model.Reserva
 import androidx.compose.ui.tooling.preview.Preview
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import java.util.Calendar
 import java.util.Locale
 import java.text.SimpleDateFormat
