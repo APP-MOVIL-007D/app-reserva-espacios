@@ -57,7 +57,7 @@ fun CalendarioEspacioScreenContent(
     onBackClick: () -> Unit,
     onSolicitarReserva: () -> Unit
 ) {
-    var fechaSeleccionada by remember { mutableStateOf("2026-10-20") }
+    var fechaSeleccionada by remember { mutableStateOf("20/10") }
     var mesActualOffset by remember { mutableIntStateOf(0) }
 
     val calendario = Calendar.getInstance().apply {
@@ -85,7 +85,7 @@ fun CalendarioEspacioScreenContent(
         val nombre = diaFormat.format(calDia.time).replaceFirstChar { it.uppercase() }.take(3).replace(".", "")
         val diaStr = dia.toString().padStart(2, '0')
         val mesStr = mesActual.toString().padStart(2, '0')
-        DiaSemana(nombre, dia, "$anioActual-$mesStr-$diaStr")
+        DiaSemana(nombre, dia, "$diaStr/$mesStr")
     }
 
     val bloquesBase = listOf(
@@ -101,6 +101,8 @@ fun CalendarioEspacioScreenContent(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -132,6 +134,7 @@ fun CalendarioEspacioScreenContent(
                         text = textoMesAnio,
                         style = MaterialTheme.typography.titleMedium
                     )
+
                     Row {
                         IconButton(
                             onClick = { mesActualOffset-- },
@@ -209,7 +212,6 @@ fun CalendarioEspacioScreenContent(
                 }
 
                 val estadoBloque = when {
-                    bloque.horaInicio == "08:31" -> "Clase"
                     reservaEncontrada != null -> reservaEncontrada.estado
                     else -> "Disponible"
                 }
@@ -217,21 +219,18 @@ fun CalendarioEspacioScreenContent(
                 val tituloBoton = when (estadoBloque) {
                     "Aprobada" -> "Reservado"
                     "Pendiente" -> "Pendiente"
-                    "Clase" -> "Clase"
                     else -> "Disponible"
                 }
 
                 val subtitulo = when (estadoBloque) {
                     "Aprobada" -> "No disponible"
                     "Pendiente" -> "Esperando aprobación"
-                    "Clase" -> "Bloqueado por horario académico"
                     else -> "Toca para solicitar"
                 }
 
                 val colorFondo = when (estadoBloque) {
                     "Aprobada" -> MaterialTheme.colorScheme.onSurface
                     "Pendiente" -> MaterialTheme.colorScheme.secondaryContainer
-                    "Clase" -> MaterialTheme.colorScheme.surfaceVariant
                     else -> MaterialTheme.colorScheme.surface
                 }
                 
