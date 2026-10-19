@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -19,17 +20,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 data class Sala(val nombre: String, val capacidad: Int)
 
 @Composable
-fun EspacioScreen(navController: NavController,
-                  reservasViewModel: ReservasViewModel,
-                  modifier: Modifier = Modifier) {
+fun EspacioScreen(navController: NavController, reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier) {
     EspacioScreenContent(
         reservas = reservasViewModel.reservas,
         onNavigateToSolicitarReserva = { espacioNombre ->
@@ -42,19 +44,16 @@ fun EspacioScreen(navController: NavController,
 @Composable
 fun EspacioScreenContent(
     reservas: List<Reserva>,
-    //ahora lleva al clendario, no a solicitar
     onNavigateToSolicitarReserva: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var buscarEspacio by remember { mutableStateOf("") }
 
 
-    //estan buenos los ejemplos, pero creo q es mejor guiarnos por el mapa de la sede
     val espaciosBase = listOf(
-        Sala("Sala 01", 30),
-        Sala("Sala 02", 25)
+        Sala("Sala LC15", 35),
+        Sala("Sala LC47", 34)
     )
-
 
     val espaciosDesdeDB = reservas
         .map { it.espacio }
@@ -134,13 +133,13 @@ fun EspacioScreenContent(
 @Preview(showBackground = true)
 @Composable
 fun EspacioScreenPreview() {
-    ReservaEspaciosTheme {
+    ReservaEspaciosTheme() {
         EspacioScreenContent(
             reservas = listOf(
                 Reserva(1, "Sala 01", "2024-01-01", "10:00", "Reunión", "Aprobada"),
                 Reserva(2, "Sala 02", "2024-01-01", "11:00", "Estudio", "Pendiente")
             ),
-            onNavigateToSolicitarReserva = {}
+            onNavigateToCalendarioEspacio = {}
         )
     }
 }
