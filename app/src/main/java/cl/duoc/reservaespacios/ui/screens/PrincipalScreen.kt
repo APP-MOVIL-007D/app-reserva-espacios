@@ -36,6 +36,7 @@ val pestanas = listOf(
     Pestana("Espacios", Icons.Filled.Place, Icons.Outlined.Place),
     Pestana("Notificaciones", Icons.Filled.Notifications, Icons.Outlined.Notifications),
     Pestana("Menu", Icons.Filled.Menu, Icons.Outlined.Menu),
+
 )
 
 @Composable
@@ -61,11 +62,18 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
         when (reservasViewModel.pestanaActual) {
-            "Inicio" -> InicioScreen(reservasViewModel,modifier)
+            "Inicio" -> InicioScreen(reservasViewModel, modifier)
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Notificaciones" -> NotificacionScreen(navController, modifier)
-            "Menu" -> MenuScreen(navController)
+            "Menu" -> MenuScreen(navController, reservasViewModel)
             "Espacios" -> EspacioScreen(navController, reservasViewModel, modifier)
+
+            "AdminSolicitudes" -> AdminSolicitudes(viewModel = reservasViewModel)
+            "AdminNuevoEspacio" -> AdminNuevoEspacio(
+                viewModel = reservasViewModel,
+                onEspacioGuardado = { reservasViewModel.pestanaActual = "AdminSolicitudes" },
+                onVolver = { reservasViewModel.pestanaActual = "Menu" }
+            )
 
         }
 

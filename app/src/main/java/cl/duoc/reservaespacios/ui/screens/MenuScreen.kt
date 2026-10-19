@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,10 +31,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.ui.viewmodel.MenuEvento
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
+import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 
 @Composable
-fun MenuScreen(navController: NavController, viewModel: MenuViewModel = viewModel() ) {
+fun MenuScreen(
+    navController: NavController,
+    reservasViewModel: ReservasViewModel,
+    viewModel: MenuViewModel = viewModel()
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -103,7 +109,30 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = viewMode
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
+        // BOTONES DE ADMINISTRADOR
+        Button(
+            onClick = { reservasViewModel.pestanaActual = "AdminSolicitudes" },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Revisar Solicitudes")
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Button(
+            onClick = { reservasViewModel.pestanaActual = "AdminNuevoEspacio" },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Nuevo Espacio")
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
+
+        Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = viewModel::pedirCerrarSesion
         ) {

@@ -6,9 +6,12 @@ data class Reserva(
     val fecha: String,
     val horario: String,
     val motivo: String,
-    val estado: String
-
-
+    val estado: String = "Pendiente",
+    val solicitanteNombre: String = "Camila Rojas",
+    val solicitanteCargo: String = "Docente",
+    val solicitanteIniciales: String = "CR",
+    val asistentes: Int = 24,
+    val listaEspera: Int = 0
 )
 
 val reservasDePrueba = listOf(

@@ -57,15 +57,29 @@ class ReservasViewModel(application: Application): AndroidViewModel(application)
 
     fun aprobar(reserva: Reserva) {
         val index = reservas.indexOfFirst { it.id == reserva.id }
-        reservas[index] = reserva.copy(estado = "Aprobada")
-        guardar()
-
+        if (index != -1) {
+            reservas[index] = reserva.copy(estado = "Aprobada")
+            try {
+                guardar()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun rechazar(reserva: Reserva) {
         val index = reservas.indexOfFirst { it.id == reserva.id }
-        reservas[index] = reserva.copy(estado = "Rechazada")
-        guardar()
+        if (index != -1) {
+            reservas[index] = reserva.copy(estado = "Rechazada")
+            try {
+                guardar()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun agregarEspacio(nombre: String, capacidad: Int, equipamiento: String, disponible: Boolean) {
+        if (nombre.isBlank()) return
 
     }
 

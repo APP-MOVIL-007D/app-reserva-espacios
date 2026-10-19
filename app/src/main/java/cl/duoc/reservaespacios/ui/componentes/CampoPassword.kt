@@ -13,8 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import cl.duoc.reservaespacios.utils.MIN_PASSWORD
 
+private const val MIN_PASSWORD = 6
 @Composable
 fun CampoPassword(
     value: String,
