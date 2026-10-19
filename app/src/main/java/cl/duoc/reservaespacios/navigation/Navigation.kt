@@ -32,6 +32,18 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
                 espacioParam = espacioSeleccionado
             )
         }
+        composable("solicitarReserva/{espacio}/{fecha}/{hora}") { backStackEntry ->
+            val espacioSeleccionado = backStackEntry.arguments?.getString("espacio") ?: ""
+            val fechaSeleccionada = backStackEntry.arguments?.getString("fecha") ?: ""
+            val horaSeleccionada = backStackEntry.arguments?.getString("hora") ?: ""
+            SolicitarReservaScreen(
+                navController = navController,
+                reservasViewModel = reservasViewModel,
+                espacioParam = espacioSeleccionado,
+                fechaParam = fechaSeleccionada,
+                horaInicioParam = horaSeleccionada
+            )
+        }
         composable("calendarioEspacio/{espacio}") { backStackEntry ->
             val espacioSeleccionado = backStackEntry.arguments?.getString("espacio") ?: ""
             CalendarioEspacioScreen(

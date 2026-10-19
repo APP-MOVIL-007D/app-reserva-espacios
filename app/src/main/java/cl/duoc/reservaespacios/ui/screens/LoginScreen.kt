@@ -127,9 +127,9 @@ fun LoginScreen(
                         reservasViewModel.correoUsuario = correoLimpio
                         Toast.makeText(context, "Bienvenido/a", Toast.LENGTH_SHORT).show()
 
-                        val destino = if (reservasViewModel.esAdmin) "admin" else "principal"
 
-                        navController.navigate(destino) {
+
+                        navController.navigate("principal") {
                             popUpTo("login") { inclusive = true }
                         }
                     }

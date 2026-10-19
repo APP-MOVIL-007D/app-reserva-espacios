@@ -27,8 +27,8 @@ fun BarraAdmin() {
         textAlign = TextAlign.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .background(NegroDuoc)
             .statusBarsPadding()
+            .background(NegroDuoc)
             .padding(vertical = 4.dp)
     )
 }

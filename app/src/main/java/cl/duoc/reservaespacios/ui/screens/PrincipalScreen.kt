@@ -1,5 +1,6 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
+import cl.duoc.reservaespacios.ui.componentes.BarraAdmin
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 //data class de pestaña
@@ -42,6 +44,11 @@ val pestanas = listOf(
 fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavController) {
 
     Scaffold(
+        topBar = {
+            if(reservasViewModel.esAdmin){
+                BarraAdmin()
+            }
+        },
         bottomBar = {
             NavigationBar {
                 pestanas.forEach { pestana ->
@@ -64,7 +71,7 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
             "Inicio" -> InicioScreen(reservasViewModel,modifier)
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Notificaciones" -> NotificacionScreen(navController, modifier)
-            "Menu" -> MenuScreen(navController)
+            "Menu" -> Box(modifier) { MenuScreen(navController) }
             "Espacios" -> EspacioScreen(navController, reservasViewModel, modifier)
 
         }
