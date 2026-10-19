@@ -76,7 +76,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
             )
         } else {
             LazyColumn {
-                items(reservasFiltradas) { reserva ->
+                items(reservasFiltradas, key = {it.id}) { reserva ->
 
                     val colorFondo = when (reserva.estado) {
                         "Aprobada" -> Color(0xFFD0E6C0)
@@ -96,6 +96,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
+                            .animateItem()
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Surface(color = colorFondo, shape = RoundedCornerShape(50)) {
