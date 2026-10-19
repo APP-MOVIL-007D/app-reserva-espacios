@@ -7,6 +7,10 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -52,6 +56,11 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = viewMode
 
     var mostrarDialogoFoto by remember { mutableStateOf(false) }
     var bitmapImagen by remember { mutableStateOf<Bitmap?>(null) }
+    var visible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        visible = true
+    }
 
     val galeriaLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -142,26 +151,31 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = viewMode
             modifier = Modifier.padding(bottom = 80.dp)
         )
 
-        Surface(
-            modifier = Modifier
-                .size(120.dp)
-                .clickable { mostrarDialogoFoto = true },
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceVariant
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(animationSpec = tween(1000)) + scaleIn(animationSpec = tween(1000))
         ) {
-            if (bitmapImagen != null) {
-                Image(
-                    bitmap = bitmapImagen!!.asImageBitmap(),
-                    contentDescription = "foto de perfil",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "foto de perfil",
-                    modifier = Modifier.padding(24.dp)
-                )
+            Surface(
+                modifier = Modifier
+                    .size(120.dp)
+                    .clickable { mostrarDialogoFoto = true },
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceVariant
+            ) {
+                if (bitmapImagen != null) {
+                    Image(
+                        bitmap = bitmapImagen!!.asImageBitmap(),
+                        contentDescription = "foto de perfil",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "foto de perfil",
+                        modifier = Modifier.padding(24.dp)
+                    )
+                }
             }
         }
 
