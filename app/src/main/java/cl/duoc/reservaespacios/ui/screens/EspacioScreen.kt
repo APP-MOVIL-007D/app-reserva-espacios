@@ -27,7 +27,9 @@ import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 data class Sala(val nombre: String, val capacidad: Int)
 
 @Composable
-fun EspacioScreen(navController: NavController, reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier) {
+fun EspacioScreen(navController: NavController,
+                  reservasViewModel: ReservasViewModel,
+                  modifier: Modifier = Modifier) {
     EspacioScreenContent(
         reservas = reservasViewModel.reservas,
         onNavigateToSolicitarReserva = { espacioNombre ->

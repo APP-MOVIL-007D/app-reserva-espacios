@@ -34,19 +34,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
+import cl.duoc.reservaespacios.model.usuariosDePrueba
 import cl.duoc.reservaespacios.ui.componentes.CampoPassword
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.utils.validarCorreo
 import cl.duoc.reservaespacios.utils.validarPassword
 
 @Composable
-fun LoginScreen(reservasViewModel: ReservasViewModel, navController: NavController, modifier: Modifier = Modifier) {
+fun LoginScreen(
+    reservasViewModel: ReservasViewModel,
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
 
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorCorreo by remember { mutableStateOf<String?>(null) }
     var errorPassword by remember { mutableStateOf<String?>(null) }
-    var mostrarRecuperar by remember {mutableStateOf(false)}
+    var mostrarRecuperar by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
@@ -114,11 +119,22 @@ fun LoginScreen(reservasViewModel: ReservasViewModel, navController: NavControll
                 errorCorreo = validarCorreo(correo)
                 errorPassword = validarPassword(password)
                 if (errorCorreo == null && errorPassword == null) {
-                    reservasViewModel.correoUsuario = correo.trim().lowercase()
-                    Toast.makeText(context, "Bienvenido/a", Toast.LENGTH_SHORT).show()
-                    navController.navigate("principal") {
-                        popUpTo("login") { inclusive = true }
+                    val correoLimpio = correo.trim().lowercase()
+                    val usuario = usuariosDePrueba.find { it.correo == correoLimpio }
+                    if (usuario == null) {
+                        errorCorreo = "Usuario no registrado"
+                    } else {
+                        reservasViewModel.correoUsuario = correoLimpio
+                        Toast.makeText(context, "Bienvenido/a", Toast.LENGTH_SHORT).show()
+
+                        val destino = if (reservasViewModel.esAdmin) "admin" else "principal"
+
+                        navController.navigate(destino) {
+                            popUpTo("login") { inclusive = true }
+                        }
                     }
+
+
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -127,26 +143,32 @@ fun LoginScreen(reservasViewModel: ReservasViewModel, navController: NavControll
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = { mostrarRecuperar = true}){
+        TextButton(onClick = { mostrarRecuperar = true }) {
             Text("¿Olvidaste tu contraseña?")
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        Text("Acceso con tu cuenta institucional Duoc UC",
+        Text(
+            "Acceso con tu cuenta institucional Duoc UC",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 
-    if(mostrarRecuperar){
+    if (mostrarRecuperar) {
         AlertDialog(
-            onDismissRequest = {mostrarRecuperar= false},
-            icon = {Icon(Icons.Filled.Lock, contentDescription = null)},
-            title = {Text("¿Olvidaste tu contraseña?", textAlign = TextAlign.Center)},
-            text = { Text("Tu contraseña es la misma de tu cuenta Duoc UC. " +
-                    "Para recuperarla, tienes que contactar con servicios digitales.",
-                textAlign = TextAlign.Center)},
+            onDismissRequest = { mostrarRecuperar = false },
+            icon = { Icon(Icons.Filled.Lock, contentDescription = null) },
+            title = { Text("¿Olvidaste tu contraseña?", textAlign = TextAlign.Center) },
+            text = {
+                Text(
+                    "Tu contraseña es la misma de tu cuenta Duoc UC. " +
+                            "Para recuperarla, tienes que contactar con servicios digitales.",
+                    textAlign = TextAlign.Center
+                )
+            },
             confirmButton = {
-                TextButton(onClick = { mostrarRecuperar = false }){
+                TextButton(onClick = { mostrarRecuperar = false }) {
                     Text("Entendido")
                 }
             }

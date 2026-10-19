@@ -35,7 +35,9 @@ class ReservasViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    val rolUsuario: String get() = if(correoUsuario.lowercase().endsWith("@profesor.duoc.cl")) "Docente" else "Administrativo"
+    val rolUsuario: String get() = usuarioActual?.rol ?: ""
+
+    val esAdmin : Boolean get() = rolUsuario == "Administrador"
 
     init {
 
