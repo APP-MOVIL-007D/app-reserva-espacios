@@ -25,8 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.model.Reserva
-import androidx.compose.ui.tooling.preview.Preview
-import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import java.util.Calendar
 import java.util.Locale
@@ -45,7 +43,10 @@ fun CalendarioEspacioScreen(
         espacioNombre = espacioNombre,
         reservas = reservasViewModel.reservas,
         onBackClick = { navController.popBackStack() },
-        onSolicitarReserva = { navController.navigate("solicitarReserva/$espacioNombre") }
+        onSolicitarReserva = { fecha, horaInicio -> 
+            val fechaEncoded = fecha.replace("/", "-")
+            navController.navigate("solicitarReserva/$espacioNombre/$fechaEncoded/$horaInicio") 
+        }
     )
 }
 
@@ -54,7 +55,7 @@ fun CalendarioEspacioScreenContent(
     espacioNombre: String,
     reservas: List<Reserva>,
     onBackClick: () -> Unit,
-    onSolicitarReserva: () -> Unit
+    onSolicitarReserva: (String, String) -> Unit
 ) {
     var fechaSeleccionada by remember { mutableStateOf("20/10") }
     var mesActualOffset by remember { mutableIntStateOf(0) }
@@ -264,7 +265,7 @@ fun CalendarioEspacioScreenContent(
                             .border(1.dp, colorBorde, RoundedCornerShape(8.dp))
                             .background(colorFondo, RoundedCornerShape(8.dp))
                             .clickable(enabled = estadoBloque == "Disponible") {
-                                onSolicitarReserva()
+                                onSolicitarReserva(fechaSeleccionada, bloque.horaInicio)
                             },
                         contentAlignment = Alignment.CenterStart
                     ) {
