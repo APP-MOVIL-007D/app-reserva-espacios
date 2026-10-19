@@ -96,12 +96,11 @@ fun InicioScreen(reservasViewModel: ReservasViewModel, modifier: Modifier = Modi
         }
 
         //contenido de abajo, va adentro de la Column grande para q quede debajo del encabezado
-        //tengo q cambiar ttodo esto, no se q estoy haciendo porsiaca
         Card(modifier = Modifier.fillMaxWidth()){
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Text("TU PRÓXIMA RESERVA", style = MaterialTheme.typography.labelMedium)
                 if (proxima != null) {
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     val dia = proxima.fecha.substringBefore("/")
                     val numeroMes = proxima.fecha.substringAfter("/").toIntOrNull() ?: 1
                     val mes = meses.getOrElse(numeroMes - 1) { "" }

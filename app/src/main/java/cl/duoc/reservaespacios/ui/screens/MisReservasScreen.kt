@@ -71,7 +71,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
 
         if (reservasFiltradas.isEmpty()) {
             Text(
-                "No tiene reservas en esta sección",
+                "No tienes reservas en esta sección",
                 style = MaterialTheme.typography.bodyMedium
             )
         } else {

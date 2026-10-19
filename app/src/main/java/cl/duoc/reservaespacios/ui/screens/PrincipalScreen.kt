@@ -31,7 +31,7 @@ data class Pestana(
     val iconoVacio: ImageVector
 )
 
-//Para no tener q escribirlo 5 vececsDRY
+//Para no tener q escribirlo 5 vececs DRY
 val pestanas = listOf(
     Pestana("Inicio", Icons.Filled.Home, Icons.Outlined.Home),
     Pestana("Calendario", Icons.Filled.DateRange, Icons.Outlined.DateRange),
