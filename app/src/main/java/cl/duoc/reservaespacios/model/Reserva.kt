@@ -1,12 +1,19 @@
 package cl.duoc.reservaespacios.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "reservas")
 data class Reserva(
-    val id: Int,
+
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val espacio: String,
     val fecha: String,
     val horario: String,
     val motivo: String,
-    val estado: String
+    val estado: String,
+    val correoUsuario: String = "",
+    val horaIngreso : String = ""
 )
 
 val reservasDePrueba = listOf(
