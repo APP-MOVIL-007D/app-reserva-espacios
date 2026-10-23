@@ -7,6 +7,7 @@ val usuariosDePrueba = listOf(
     Usuario("agajardo@duoc.cl" , "Alejandra", "Gajardo", "Administrativo"),
     Usuario("rob.ertoto@duoc.cl" , "Roberto", "Toto", "Administrativo"),
     Usuario("nic.olivaresz@duoc.cl", "Nicolás", "Olivares", "Administrador"),
-    Usuario("fra.olmos@duoc.cl", "Francisco", "Olmos", "Administrador")
+    Usuario("fra.olmos@duoc.cl", "Francisco", "Olmos", "Administrador"),
+    Usuario("jor.espinoza@duoc.cl", "Jorge", "Espinoza", "Administrador")
 
 )

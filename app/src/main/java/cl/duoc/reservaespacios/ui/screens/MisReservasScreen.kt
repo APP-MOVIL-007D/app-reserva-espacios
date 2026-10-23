@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
@@ -108,7 +109,11 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                                 )
                             }
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(reserva.espacio, style = MaterialTheme.typography.titleMedium)
+                            Text(reserva.espacio,
+                                style = MaterialTheme.typography.titleMedium,
+                                textDecoration =
+                                    if(reserva.estado == "Cancelada") TextDecoration.LineThrough else null
+                                )
                             Text("${reserva.fecha} · ${reserva.horario}")
                             Text(reserva.motivo, style = MaterialTheme.typography.bodyMedium)
                             if (reserva.estado == "Pendiente" || reserva.estado == "Aprobada") {

@@ -8,7 +8,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import cl.duoc.reservaespacios.R
 
-
 val Poppins = FontFamily(
     Font(R.font.poppins_regular, FontWeight.Normal),
     Font(R.font.poppins_medium, FontWeight.Medium),
@@ -16,7 +15,6 @@ val Poppins = FontFamily(
     Font(R.font.poppins_bold, FontWeight.Bold)
 )
 
-// Set of Material typography styles to start with
 val Typography = Typography(
     headlineMedium = TextStyle(
         fontFamily = Poppins,

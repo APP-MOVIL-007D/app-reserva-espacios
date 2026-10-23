@@ -22,6 +22,7 @@ fun validarPassword(password: String): String? {
 
     if (password.isBlank()) return "Ingresa tu contraseña"
     if (password.length < MIN_PASSWORD) return "Debe tener al menos $MIN_PASSWORD caracteres"
+    if(!password.any { it.isDigit()}) return "Debe tener al menos un número"
 
     return null
 }

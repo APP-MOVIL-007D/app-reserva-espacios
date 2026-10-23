@@ -7,8 +7,6 @@ data class Reserva(
     val horario: String,
     val motivo: String,
     val estado: String
-
-
 )
 
 val reservasDePrueba = listOf(

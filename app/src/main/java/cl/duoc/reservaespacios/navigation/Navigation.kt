@@ -10,7 +10,6 @@ import cl.duoc.reservaespacios.ui.screens.SolicitarReservaScreen
 import cl.duoc.reservaespacios.ui.screens.CalendarioEspacioScreen
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
-
 @Composable
 fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasViewModel){
     NavHost(navController = navController, startDestination = "login") {
