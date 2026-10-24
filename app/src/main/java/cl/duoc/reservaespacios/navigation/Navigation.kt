@@ -1,6 +1,7 @@
 package cl.duoc.reservaespacios.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,16 +12,23 @@ import cl.duoc.reservaespacios.ui.screens.CalendarioEspacioScreen
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
-fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasViewModel){
-    NavHost(navController = navController, startDestination = "login") {
+fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasViewModel) {
+    //se calcula a cada rato la sesióin deneuevo , cada vez q se cambia el correo,
+    val inicio =
+        remember { if (reservasViewModel.correoUsuario.isNotEmpty()) "principal" else "login" }
+
+    NavHost(navController = navController, startDestination = inicio) {
         composable("login") {
             LoginScreen(navController = navController, reservasViewModel = reservasViewModel)
         }
         composable("principal") {
             PrincipalScreen(navController = navController, reservasViewModel = reservasViewModel)
         }
-        composable("solicitarReserva"){
-            SolicitarReservaScreen(navController = navController, reservasViewModel = reservasViewModel)
+        composable("solicitarReserva") {
+            SolicitarReservaScreen(
+                navController = navController,
+                reservasViewModel = reservasViewModel
+            )
         }
         composable("solicitarReserva/{espacio}") { backStackEntry ->
             val espacioSeleccionado = backStackEntry.arguments?.getString("espacio") ?: ""

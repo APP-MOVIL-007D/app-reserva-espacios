@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
-import cl.duoc.reservaespacios.model.usuariosDePrueba
 import cl.duoc.reservaespacios.ui.componentes.CampoPassword
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.utils.validarCorreo
@@ -135,7 +134,7 @@ fun LoginScreen(
                         ) -> errorPassword = "Contraseña incorrecta"
 
                         else -> {
-                            reservasViewModel.correoUsuario = correoLimpio
+                            reservasViewModel.iniciarSesion(correoLimpio)
                             Toast.makeText(context, "Bienvenido/a ", Toast.LENGTH_SHORT).show()
                             navController.navigate("principal") {
                                 popUpTo("login") { inclusive = true }

@@ -78,7 +78,11 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
                 MenuScreen2(
                     menuViewModel = menuViewModel2,
                     reservasViewModel = reservasViewModel,
-                    onCerrarSesion = { navController.navigate("login") },
+                    onCerrarSesion = {
+                        reservasViewModel.cerrarSesion()
+                        navController.navigate("login") {
+                        popUpTo("principal") { inclusive = true}
+                    } },
                     onIrASolicitudes = { },
                     onIrACargarHorario = { },
                     onIrANuevoEspacio = { }

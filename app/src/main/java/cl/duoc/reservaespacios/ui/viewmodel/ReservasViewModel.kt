@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cl.duoc.reservaespacios.data.repository.EspacioRepository
 import cl.duoc.reservaespacios.data.repository.ReservaRepository
+import cl.duoc.reservaespacios.data.repository.SesionRepository
 import cl.duoc.reservaespacios.data.repository.UsuarioRepository
 import cl.duoc.reservaespacios.data.room.AppDatabase
 import cl.duoc.reservaespacios.model.Espacio
@@ -23,14 +24,16 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     private val reservaRepository = ReservaRepository(db.reservaDao())
     private val espacioRepository = EspacioRepository(db.espacioDao())
     private val usuarioRepository = UsuarioRepository(db.usuarioDao())
-    val usuarios = mutableStateListOf<Usuario>()
+    private val sesionRepository = SesionRepository(application)
 
+    var correoUsuario by mutableStateOf(sesionRepository.obtenerCorreo())
+        private set
+
+    val usuarios = mutableStateListOf<Usuario>()
 
     val espacios = mutableStateListOf<Espacio>()
 
     var pestanaActual by mutableStateOf("Inicio")
-
-    var correoUsuario by mutableStateOf("")
 
     val usuarioActual: Usuario?
         get() = usuarios.find {
@@ -61,6 +64,16 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
 
     fun passwordCorrecta(correo: String, pass: String): Boolean =
         usuarios.any { it.correo == correo && it.password == pass }
+
+    fun iniciarSesion(correo: String) {
+        correoUsuario = correo
+        sesionRepository.guardarCorreo(correo)
+    }
+
+    fun cerrarSesion() {
+        correoUsuario = ""
+        sesionRepository.cerrar()
+    }
 
     init {
 
