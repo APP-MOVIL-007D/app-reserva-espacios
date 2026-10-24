@@ -1,7 +1,6 @@
 package cl.duoc.reservaespacios.ui.screens
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -71,12 +70,15 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
         when (reservasViewModel.pestanaActual) {
-            "Inicio" -> InicioScreen(
-                reservasViewModel,
-                if (reservasViewModel.esAdmin) modifier.consumeWindowInsets(innerPadding)
-                else Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-                onVerEspacio = { nombre -> navController.navigate("calendarioEspacio/$nombre")}
-            )
+            "Inicio" -> if (reservasViewModel.esAdmin) {
+                AdminSolicitudesScreen(reservasViewModel, modifier)
+            } else {
+                InicioScreen(
+                    reservasViewModel,
+                    Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+                    onVerEspacio = { nombre -> navController.navigate("calendarioEspacio/$nombre") }
+                )
+            }
 
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Notificaciones" -> NotificacionScreen(navController, modifier)
@@ -91,9 +93,9 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
                             popUpTo("principal") { inclusive = true }
                         }
                     },
-                    onIrASolicitudes = { },
-                    onIrACargarHorario = { },
-                    onIrANuevoEspacio = { }
+                    onIrASolicitudes = { reservasViewModel.pestanaActual = "Inicio" },
+                    onIrACargarHorario = { navController.navigate("cargarHorario") },
+                    onIrANuevoEspacio = { navController.navigate("nuevoEspacio") }
                 )
             }
 

@@ -1,7 +1,11 @@
 package cl.duoc.reservaespacios.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import cl.duoc.reservaespacios.ui.componentes.BarraAdmin
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +39,17 @@ import androidx.navigation.NavController
 fun CargarHorarioScreen(navController: NavController){
     var archivo by remember { mutableStateOf(null) }
 
-    Column() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+    BarraAdmin()
+    Column(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .padding(16.dp)
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -125,6 +139,7 @@ fun CargarHorarioScreen(navController: NavController){
             }
         }
 
+    }
     }
 
 }
