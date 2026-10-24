@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class MenuViewModel2 : ViewModel() {
+class MenuViewModel : ViewModel() {
 
     // Variables que controlan si se ven los cuadros de diálogo o no
     var mostrarToastCerrarSesion by mutableStateOf(false)

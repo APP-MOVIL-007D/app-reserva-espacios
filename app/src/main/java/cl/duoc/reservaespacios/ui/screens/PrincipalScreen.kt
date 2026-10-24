@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.ui.componentes.BarraAdmin
-import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel2
+import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 //data class de pestaña
@@ -74,9 +74,9 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Notificaciones" -> NotificacionScreen(navController, modifier)
             "Menu" -> Box(modifier) {
-                val menuViewModel2: MenuViewModel2 = viewModel()
-                MenuScreen2(
-                    menuViewModel = menuViewModel2,
+                val menuViewModel: MenuViewModel = viewModel()
+                MenuScreen(
+                    menuViewModel = menuViewModel,
                     reservasViewModel = reservasViewModel,
                     onCerrarSesion = {
                         reservasViewModel.cerrarSesion()

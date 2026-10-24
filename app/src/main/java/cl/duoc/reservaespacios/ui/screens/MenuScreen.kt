@@ -10,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,10 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -48,15 +45,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
-import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel2
+import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
-fun MenuScreen2(
-    menuViewModel: MenuViewModel2,
+fun MenuScreen(
+    menuViewModel: MenuViewModel,
     reservasViewModel: ReservasViewModel,
     modifier: Modifier = Modifier,
     //lambda
