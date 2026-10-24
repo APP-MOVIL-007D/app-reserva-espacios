@@ -6,13 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import cl.duoc.reservaespacios.model.Espacio
 import cl.duoc.reservaespacios.model.Reserva
+import cl.duoc.reservaespacios.model.Usuario
 
 //si llego a cambiar una columna, lo ideal sería version++
-@Database(entities = [Reserva::class, Espacio::class], version = 1, exportSchema = false)
+@Database(entities = [Reserva::class, Espacio::class, Usuario::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun reservaDao(): ReservaDao
     abstract fun espacioDao(): EspacioDao
-
+    abstract fun usuarioDao(): UsuarioDao
     companion object{
         @Volatile
         private var INSTANCE: AppDatabase? = null
@@ -23,7 +24,8 @@ abstract class AppDatabase : RoomDatabase(){
                     context.applicationContext,
                     AppDatabase::class.java,
                     "reservas_db"
-                ).build().also { INSTANCE = it }
+                ).fallbackToDestructiveMigration(true).build()
+                    .also { INSTANCE = it }
             }
         }
 

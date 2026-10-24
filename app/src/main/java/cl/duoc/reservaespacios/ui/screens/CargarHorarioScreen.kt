@@ -53,7 +53,6 @@ fun CargarHorarioScreen(navController: NavController){
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.width(48.dp))
-
         }
         
         Card(

@@ -6,7 +6,6 @@ import cl.duoc.reservaespacios.model.reservasDePrueba
 
 class ReservaRepository(private val dao: ReservaDao){
 
-
     suspend fun cargarReservas(): List<Reserva>{
         if(dao.obtenerTodas().isEmpty()) dao.insertarTodas(reservasDePrueba)
         return dao.obtenerTodas()
@@ -16,10 +15,8 @@ class ReservaRepository(private val dao: ReservaDao){
         dao.insertar(reserva)
     }
 
-
     suspend fun actualizar(reserva: Reserva){
         dao.actualizar(reserva)
     }
-
 
 }

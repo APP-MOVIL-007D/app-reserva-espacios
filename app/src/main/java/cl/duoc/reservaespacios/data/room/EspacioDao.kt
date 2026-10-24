@@ -16,5 +16,4 @@ interface EspacioDao{
 
     @Insert
     suspend fun insertarTodos(espacios: List<Espacio>)
-
 }

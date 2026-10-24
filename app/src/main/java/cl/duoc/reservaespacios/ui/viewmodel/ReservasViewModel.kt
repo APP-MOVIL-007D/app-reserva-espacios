@@ -9,11 +9,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cl.duoc.reservaespacios.data.repository.EspacioRepository
 import cl.duoc.reservaespacios.data.repository.ReservaRepository
+import cl.duoc.reservaespacios.data.repository.UsuarioRepository
 import cl.duoc.reservaespacios.data.room.AppDatabase
 import cl.duoc.reservaespacios.model.Espacio
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.model.Usuario
-import cl.duoc.reservaespacios.model.usuariosDePrueba
 import kotlinx.coroutines.launch
 
 class ReservasViewModel(application: Application) : AndroidViewModel(application) {
@@ -22,6 +22,9 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     private val db = AppDatabase.getInstance(application)
     private val reservaRepository = ReservaRepository(db.reservaDao())
     private val espacioRepository = EspacioRepository(db.espacioDao())
+    private val usuarioRepository = UsuarioRepository(db.usuarioDao())
+    val usuarios = mutableStateListOf<Usuario>()
+
 
     val espacios = mutableStateListOf<Espacio>()
 
@@ -30,7 +33,7 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     var correoUsuario by mutableStateOf("")
 
     val usuarioActual: Usuario?
-        get() = usuariosDePrueba.find {
+        get() = usuarios.find {
             it.correo.equals(
                 correoUsuario,
                 ignoreCase = true
@@ -53,11 +56,18 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     val rolUsuario: String get() = usuarioActual?.rol ?: ""
     val esAdmin: Boolean get() = rolUsuario == "Administrador"
 
+    //nuevo
+    fun existeUsuario(correo: String): Boolean = usuarios.any { it.correo == correo }
+
+    fun passwordCorrecta(correo: String, pass: String): Boolean =
+        usuarios.any { it.correo == correo && it.password == pass }
+
     init {
 
         viewModelScope.launch {
             reservas.addAll(reservaRepository.cargarReservas())
             espacios.addAll(espacioRepository.cargarEspacios())
+            usuarios.addAll(usuarioRepository.cargarUsuarios())
 
         }
     }

@@ -120,21 +120,28 @@ fun LoginScreen(
             onClick = {
                 errorCorreo = validarCorreo(correo)
                 errorPassword = validarPassword(password)
-                if (errorCorreo == null && errorPassword == null) {
-                    val correoLimpio = correo.trim().lowercase()
-                    val usuario = usuariosDePrueba.find { it.correo == correoLimpio }
-                    if (usuario == null) {
-                        errorCorreo = "Usuario no registrado"
-                    } else {
-                        reservasViewModel.correoUsuario = correoLimpio
-                        Toast.makeText(context, "Bienvenido/a", Toast.LENGTH_SHORT).show()
 
-                        navController.navigate("principal") {
-                            popUpTo("login") { inclusive = true }
+
+                if (errorCorreo == null && errorPassword == null) {
+
+                    val correoLimpio = correo.trim().lowercase()
+                    when {
+                        !reservasViewModel.existeUsuario(correoLimpio) -> errorCorreo =
+                            "Usuario no registrado"
+
+                        !reservasViewModel.passwordCorrecta(
+                            correoLimpio,
+                            password
+                        ) -> errorPassword = "Contraseña incorrecta"
+
+                        else -> {
+                            reservasViewModel.correoUsuario = correoLimpio
+                            Toast.makeText(context, "Bienvenido/a ", Toast.LENGTH_SHORT).show()
+                            navController.navigate("principal") {
+                                popUpTo("login") { inclusive = true }
+                            }
                         }
                     }
-
-
                 }
             },
             modifier = Modifier.fillMaxWidth(),
