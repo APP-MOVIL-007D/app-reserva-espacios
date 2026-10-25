@@ -81,7 +81,7 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
             }
 
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
-            "Notificaciones" -> NotificacionScreen(navController, modifier)
+            "Notificaciones" -> NotificacionScreen2(reservasViewModel, modifier)
             "Menu" -> Box(modifier) {
                 val menuViewModel: MenuViewModel = viewModel()
                 MenuScreen(

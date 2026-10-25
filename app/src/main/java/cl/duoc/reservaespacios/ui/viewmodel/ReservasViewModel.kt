@@ -160,4 +160,32 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
             espacios.add(nuevo)
         }
     }
+
+    // Retorna las notificaciones procesadas solo para el usuario actual
+    val notificacionesUsuario: List<Notificacion>
+        get() = reservas
+            // Filtramos solo las reservas del usuario actual que ya fueron respondidas
+            .filter { it.correoUsuario == correoUsuario && (it.estado == "Aprobada" || it.estado == "Rechazada") }
+            // Las transformamos en objetos Notificacion
+            .map { reserva ->
+                val titulo = if (reserva.estado == "Aprobada") "Reserva Aprobada" else "Reserva Rechazada"
+                val mensaje = "Su reserva para ${reserva.espacio} (${reserva.horario}) ha sido ${reserva.estado.lowercase()}."
+                Notificacion(
+                    titulo = titulo,
+                    mensaje = mensaje,
+                    fecha = reserva.fecha,
+                    leida = true
+                )
+            }
+            .reversed()
+}
+
+// Estructura de Notificacion ocupada en notificacionesUsuario
+data class Notificacion(
+    val titulo: String,
+    val mensaje: String,
+    val fecha: String,
+    val leida: Boolean
+){
+
 }
