@@ -43,11 +43,11 @@ val pestanas = listOf(
 )
 
 @Composable
-fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavController) {
+fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavController) {
 
     Scaffold(
         topBar = {
-            if(reservasViewModel.esAdmin){
+            if (reservasViewModel.esAdmin) {
                 BarraAdmin()
             }
         },
@@ -70,7 +70,16 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
         when (reservasViewModel.pestanaActual) {
-            "Inicio" -> InicioScreen(reservasViewModel,modifier)
+            "Inicio" -> if (reservasViewModel.esAdmin) {
+                AdminSolicitudesScreen(reservasViewModel, modifier)
+            } else {
+                InicioScreen(
+                    reservasViewModel,
+                    Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+                    onVerEspacio = { nombre -> navController.navigate("calendarioEspacio/$nombre") }
+                )
+            }
+
             "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
             "Notificaciones" -> NotificacionScreen(navController, modifier)
             "Menu" -> Box(modifier) {
@@ -81,13 +90,15 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController : NavCon
                     onCerrarSesion = {
                         reservasViewModel.cerrarSesion()
                         navController.navigate("login") {
-                        popUpTo("principal") { inclusive = true}
-                    } },
-                    onIrASolicitudes = { },
-                    onIrACargarHorario = { },
-                    onIrANuevoEspacio = { }
+                            popUpTo("principal") { inclusive = true }
+                        }
+                    },
+                    onIrASolicitudes = { reservasViewModel.pestanaActual = "Inicio" },
+                    onIrACargarHorario = { navController.navigate("cargarHorario") },
+                    onIrANuevoEspacio = { navController.navigate("nuevoEspacio") }
                 )
             }
+
             "Espacios" -> EspacioScreen(navController, reservasViewModel, modifier)
 
         }

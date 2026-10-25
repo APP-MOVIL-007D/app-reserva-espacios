@@ -3,7 +3,9 @@ package cl.duoc.reservaespacios.ui.componentes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -17,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -50,15 +53,21 @@ fun CampoPassword(
         value = value,
         onValueChange = onValueChange,
         label = { Text("Contraseña") },
-        singleLine = true,
+        singleLine = true, isError = errorTexto != null,
         visualTransformation =
-            if(visible) VisualTransformation.None else PasswordVisualTransformation(),
+            if (visible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
-            IconButton(onClick = { visible = !visible }) {
-                Icon(
-                    if (visible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                    contentDescription = if (visible) "Ocultar contraseña" else "Mostrar contraseña"
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (errorTexto != null) {
+                    Icon(Icons.Filled.Error, contentDescription = "Error")
+                }
+                IconButton(onClick = { visible = !visible }) {
+                    Icon(
+                        if (visible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                        contentDescription = if (visible) "Ocultar contraseña" else "Mostrar contraseña"
+                    )
+
+                }
 
             }
         },

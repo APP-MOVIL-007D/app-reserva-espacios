@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import cl.duoc.reservaespacios.ui.theme.ReservaEspaciosTheme
-import cl.duoc.reservaespacios.model.Reserva
+import cl.duoc.reservaespacios.model.Espacio
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 data class Sala(val nombre: String, val capacidad: Int)
@@ -33,7 +33,7 @@ data class Sala(val nombre: String, val capacidad: Int)
 @Composable
 fun EspacioScreen(navController: NavController, reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier) {
     EspacioScreenContent(
-        reservas = reservasViewModel.reservas,
+        espacios = reservasViewModel.espacios,
         onNavigateToSolicitarReserva = { espacioNombre ->
             navController.navigate("calendarioEspacio/$espacioNombre")
         },
@@ -43,25 +43,14 @@ fun EspacioScreen(navController: NavController, reservasViewModel: ReservasViewM
 
 @Composable
 fun EspacioScreenContent(
-    reservas: List<Reserva>,
+    espacios: List<Espacio>,
     onNavigateToSolicitarReserva: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var buscarEspacio by remember { mutableStateOf("") }
 
 
-    val espaciosBase = listOf(
-        Sala("Sala LC15", 35),
-        Sala("Sala LC47", 34)
-    )
-
-    val espaciosDesdeDB = reservas
-        .map { it.espacio }
-        .distinct()
-        .filter { nombre -> espaciosBase.none { it.nombre == nombre } }
-        .map { Sala(it, 30) }
-
-    val listaEspacios = espaciosBase + espaciosDesdeDB
+    val listaEspacios = espacios.map { Sala(it.nombre, it.capacidad) }
 
 
     val espaciosFiltrados = listaEspacios.filter {

@@ -26,3 +26,22 @@ fun validarPassword(password: String): String? {
 
     return null
 }
+
+fun validarNombreEspacio(nombre: String, yaExiste: Boolean): String? {
+    if (nombre.isBlank()) return "El nombre es obligatorio"
+    if (yaExiste) return "Ya existe un espacio con ese nombre"
+    return null
+}
+
+fun validarCapacidad(capacidad: String): String? {
+    if (capacidad.isBlank()) return "Ingresa la capacidad"
+    val numero = capacidad.toIntOrNull() ?: return "Solo números"
+    if (numero < 1) return "Tiene que ser al menos 1 persona"
+    if (numero > 500) return "Máximo 500 personas"
+    return null
+}
+
+fun validarUbicacion(ubicacion: String): String? {
+    if (ubicacion.isBlank()) return "Ingresa dónde está el espacio"
+    return null
+}

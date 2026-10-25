@@ -9,7 +9,7 @@ import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.model.Usuario
 
 //si llego a cambiar una columna, lo ideal sería version++
-@Database(entities = [Reserva::class, Espacio::class, Usuario::class], version = 2, exportSchema = false)
+@Database(entities = [Reserva::class, Espacio::class, Usuario::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun reservaDao(): ReservaDao
     abstract fun espacioDao(): EspacioDao

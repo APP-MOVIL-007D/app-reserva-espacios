@@ -9,6 +9,8 @@ import cl.duoc.reservaespacios.ui.screens.LoginScreen
 import cl.duoc.reservaespacios.ui.screens.PrincipalScreen
 import cl.duoc.reservaespacios.ui.screens.SolicitarReservaScreen
 import cl.duoc.reservaespacios.ui.screens.CalendarioEspacioScreen
+import cl.duoc.reservaespacios.ui.screens.AdminNuevoEspacioScreen
+import cl.duoc.reservaespacios.ui.screens.CargarHorarioScreen
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
@@ -57,6 +59,16 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
                 reservasViewModel = reservasViewModel,
                 espacioNombre = espacioSeleccionado
             )
+        }
+
+        composable("nuevoEspacio") {
+            AdminNuevoEspacioScreen(
+                reservasViewModel = reservasViewModel,
+                onVolver = { navController.popBackStack() }
+            )
+        }
+        composable("cargarHorario") {
+            CargarHorarioScreen(navController = navController)
         }
 
     }

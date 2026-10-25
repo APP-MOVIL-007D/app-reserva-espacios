@@ -9,7 +9,8 @@ data class Espacio(
     val capacidad : Int,
     val equipamiento : String,
     val ubicacion: String,
-    val estado : String = "Disponible"
+    val estado : String = "Disponible",
+    val foto: String = ""
 )
 
 val espaciosDePrueba = listOf(

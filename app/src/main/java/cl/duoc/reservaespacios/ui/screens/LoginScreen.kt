@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -95,7 +95,7 @@ fun LoginScreen(
             supportingText = { errorCorreo?.let { Text(it) } },
             trailingIcon = {
                 if (errorCorreo != null) Icon(
-                    Icons.Filled.Warning, contentDescription = "Error"
+                    Icons.Filled.Error, contentDescription = "Error"
                 )
             },
             modifier = Modifier.fillMaxWidth()

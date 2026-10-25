@@ -1,6 +1,7 @@
 package cl.duoc.reservaespacios.ui.viewmodel
 
 import android.app.Application
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +23,7 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
 
     private val db = AppDatabase.getInstance(application)
     private val reservaRepository = ReservaRepository(db.reservaDao())
-    private val espacioRepository = EspacioRepository(db.espacioDao())
+    private val espacioRepository = EspacioRepository(db.espacioDao(), application.filesDir)
     private val usuarioRepository = UsuarioRepository(db.usuarioDao())
     private val sesionRepository = SesionRepository(application)
 
@@ -131,5 +132,32 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         reservas.add(nueva)
         viewModelScope.launch { reservaRepository.agregar(nueva) }
 
+    }
+
+    fun usuarioPorCorreo(correo: String): Usuario? =
+        usuarios.find { it.correo.equals(correo, ignoreCase = true) }
+
+    fun listaDeEspera(reserva: Reserva): Int = reservas.count {
+        it.id < reserva.id && it.estado == "Pendiente" &&
+                it.espacio == reserva.espacio && it.fecha == reserva.fecha && it.horario == reserva.horario
+    }
+
+    fun existeEspacio(nombre: String): Boolean =
+        espacios.any { it.nombre.equals(nombre.trim(), ignoreCase = true) }
+
+    fun agregarEspacio(
+        nombre: String,
+        capacidad: Int,
+        equipamiento: String,
+        ubicacion: String,
+        estado: String,
+        foto: Bitmap?
+    ) {
+        viewModelScope.launch {
+            val rutaFoto = if (foto != null) espacioRepository.guardarFoto(nombre.trim(), foto) else ""
+            val nuevo = Espacio(nombre.trim(), capacidad, equipamiento.trim(), ubicacion.trim(), estado, rutaFoto)
+            espacioRepository.agregar(nuevo)
+            espacios.add(nuevo)
+        }
     }
 }
