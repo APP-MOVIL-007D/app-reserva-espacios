@@ -23,5 +23,10 @@ val espaciosDePrueba = listOf(
     Espacio("Salas de Actuación", 25, "Espejos · Audio", "Edificio Sur, piso 5"),
     Espacio("Sala S302", 30, "Pantalla · Pizarra", "Edificio Tecnológico CTI, piso 3"),
     Espacio("Sala S604", 35, "Proyector · Pizarra", "Edificio Tecnológico CTI, piso 6"),
-    Espacio("Laboratorio LC5", 24, "Computadores · Proyector", "Edificio Tecnológico CTI, piso 2")
+    Espacio("Sala S608", 40, "Mesas · Proyector", "Edificio Tecnológico CTI, piso 6"),
+    Espacio("Sala S81", 25, "Proyector · Pizarra", "Edificio Sur, piso 8"),
+    Espacio("Laboratorio LC3", 30, "Computadores · Proyector", "Edificio Tecnológico CTI, piso 2"),
+    Espacio("Laboratorio LC4", 30, "Computadores · Proyector", "Edificio Tecnológico CTI, piso 2"),
+    Espacio("Laboratorio LC5", 30, "Computadores · Proyector", "Edificio Tecnológico CTI, piso 2"),
+    Espacio("Laboratorio LC47", 32, "Computadores · Proyector", "Edificio Norte, piso 4"),
 )

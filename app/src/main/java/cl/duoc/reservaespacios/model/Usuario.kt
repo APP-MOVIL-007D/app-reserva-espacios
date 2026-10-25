@@ -15,6 +15,11 @@ data class Usuario(
 
 val usuariosDePrueba = listOf(
     Usuario("nan.bernal@profesor.duoc.cl", "Nancy", "Bernal", "Docente", "nancy2026", ""),
+    Usuario("leo.hernandez@profesor.duoc.cl", "Leonardo", "Hernández", "Docente", "leonardo2026", ""),
+    Usuario("jav.pena@profesor.duoc.cl", "Javier", "Peña", "Docente", "javier2026", ""),
+    Usuario("nat.herrera@profesor.duoc.cl", "Natalia", "Herrera", "Docente", "natalia2026", ""),
+    Usuario("ver.lobos@profesor.duoc.cl", "Verónica", "Lobos", "Docente", "veronica2026", ""),
+    Usuario("mar.alvarez@profesor.duoc.cl", "María Jesús", "Álvarez", "Docente", "maria2026", ""),
     Usuario("agajardo@duoc.cl", "Alejandra", "Gajardo", "Administrativo", "alejandra2026", ""),
     Usuario("rob.ertoto@duoc.cl", "Roberto", "Toto", "Administrativo", "roberto2026", ""),
     Usuario("nic.olivaresz@duoc.cl", "Nicolás", "Olivares", "Administrador", "nicolas2026", ""),
