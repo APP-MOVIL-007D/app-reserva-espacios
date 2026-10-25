@@ -25,3 +25,9 @@ fun numeroFecha(fecha: String) : Int{
 fun numeroHora(horario: String) : Int =
     horario.take(5).replace(":", "").toIntOrNull() ?: 0
 
+// "25/10" -> Sería "Hoy", "26/10" -> Mañana, otra fecha quedaría igual
+fun textoDia(fecha: String) : String = when(fecha) {
+    fechaDesdeHoy(0) -> "Hoy"
+    fechaDesdeHoy(1) -> "Mañana"
+    else -> fecha
+}

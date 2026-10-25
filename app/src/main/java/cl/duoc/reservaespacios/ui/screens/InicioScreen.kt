@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
@@ -45,9 +46,6 @@ fun InicioScreen(
 
     val styleTitleLarge = MaterialTheme.typography.titleLarge
     val styleTitleMedium = MaterialTheme.typography.titleMedium
-
-    val meses =
-        listOf("ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC")
 
     val nombre = reservasViewModel.nombreUsuario
 
@@ -138,33 +136,11 @@ fun InicioScreen(
                     Text("TU PRÓXIMA RESERVA", style = MaterialTheme.typography.labelMedium)
                     if (proxima != null) {
                         Spacer(modifier = Modifier.height(8.dp))
-                        val dia = proxima.fecha.substringBefore("/")
-                        val numeroMes = proxima.fecha.substringAfter("/").toIntOrNull() ?: 1
-                        val mes = meses.getOrElse(numeroMes - 1) { "" }
+
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Surface(
-                                color = MaterialTheme.colorScheme.secondary,
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.size(56.dp)
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        dia,
-                                        style = styleTitleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                    Text(
-                                        mes,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
+                            CuadroFecha(proxima.fecha)
+
 
                             Spacer(modifier = Modifier.width(12.dp))
 

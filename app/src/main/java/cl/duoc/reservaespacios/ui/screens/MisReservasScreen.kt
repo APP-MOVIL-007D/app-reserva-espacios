@@ -1,16 +1,20 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
@@ -24,19 +28,22 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.model.Reserva
+import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.utils.textoDia
 
 @Composable
 fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier) {
 
     val pestanasReserva = listOf("Pendientes", "Aprobadas", "Historial")
     var pestanaActual by remember { mutableIntStateOf(0) }
-    var reservaACancelar by remember { mutableStateOf<Reserva?> (null) }
+    var reservaACancelar by remember { mutableStateOf<Reserva?>(null) }
 
     val estadoBuscado = when (pestanaActual) {
         0 -> "Pendiente"
@@ -55,7 +62,6 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
             .padding(16.dp)
     ) {
         Text("Mis reservas", style = MaterialTheme.typography.headlineMedium)
-
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -77,7 +83,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
             )
         } else {
             LazyColumn {
-                items(reservasFiltradas, key = {it.id}) { reserva ->
+                items(reservasFiltradas, key = { it.id }) { reserva ->
 
                     val colorFondo = when (reserva.estado) {
                         "Aprobada" -> Color(0xFFD0E6C0)
@@ -94,32 +100,60 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                     }
 
                     Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
                             .animateItem()
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Surface(color = colorFondo, shape = RoundedCornerShape(50)) {
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ){
+                                Surface(color = colorFondo, shape = RoundedCornerShape(50)) {
+                                    Text(
+                                        reserva.estado,
+                                        color = colorTexto,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                    )
+                                }
                                 Text(
-                                    reserva.estado,
-                                    color = colorTexto,
+                                    textoDia(reserva.fecha),
                                     style = MaterialTheme.typography.labelMedium,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(reserva.espacio,
-                                style = MaterialTheme.typography.titleMedium,
-                                textDecoration =
-                                    if(reserva.estado == "Cancelada") TextDecoration.LineThrough else null
-                                )
-                            Text("${reserva.fecha} · ${reserva.horario}")
-                            Text(reserva.motivo, style = MaterialTheme.typography.bodyMedium)
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Row(verticalAlignment = Alignment.CenterVertically){
+                                CuadroFecha(reserva.fecha)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column{
+                                    Text(
+                                        reserva.espacio,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        textDecoration =
+                                            if (reserva.estado == "Cancelada") TextDecoration.LineThrough else null
+                                    )
+                                    Text(reserva.horario,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(reserva.motivo, style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+
                             if (reserva.estado == "Pendiente" || reserva.estado == "Aprobada") {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 OutlinedButton(
-                                    onClick = { reservaACancelar = reserva},
+                                    onClick = { reservaACancelar = reserva },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text("Cancelar")
