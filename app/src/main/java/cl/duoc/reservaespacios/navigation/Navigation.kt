@@ -28,16 +28,24 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
         }
         composable("solicitarReserva") {
             SolicitarReservaScreen(
-                navController = navController,
-                reservasViewModel = reservasViewModel
+                onVolver = { navController.popBackStack() },
+                onGuardarReserva = { espacio, fecha, horario, motivo ->
+                    reservasViewModel.agregarReserva(espacio, fecha, horario, motivo)
+                    reservasViewModel.pestanaActual = "Calendario"
+                    navController.popBackStack()
+                }
             )
         }
         composable("solicitarReserva/{espacio}") { backStackEntry ->
             val espacioSeleccionado = backStackEntry.arguments?.getString("espacio") ?: ""
             SolicitarReservaScreen(
-                navController = navController,
-                reservasViewModel = reservasViewModel,
-                espacioParam = espacioSeleccionado
+                espacioParam = espacioSeleccionado,
+                onVolver = { navController.popBackStack() },
+                onGuardarReserva = { espacio, fecha, horario, motivo ->
+                    reservasViewModel.agregarReserva(espacio, fecha, horario, motivo)
+                    reservasViewModel.pestanaActual = "Calendario"
+                    navController.popBackStack()
+                }
             )
         }
         composable("solicitarReserva/{espacio}/{fecha}/{hora}") { backStackEntry ->
@@ -45,11 +53,15 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
             val fechaSeleccionada = backStackEntry.arguments?.getString("fecha") ?: ""
             val horaSeleccionada = backStackEntry.arguments?.getString("hora") ?: ""
             SolicitarReservaScreen(
-                navController = navController,
-                reservasViewModel = reservasViewModel,
                 espacioParam = espacioSeleccionado,
                 fechaParam = fechaSeleccionada,
-                horaInicioParam = horaSeleccionada
+                horaInicioParam = horaSeleccionada,
+                onVolver = { navController.popBackStack() },
+                onGuardarReserva = { espacio, fecha, horario, motivo ->
+                    reservasViewModel.agregarReserva(espacio, fecha, horario, motivo)
+                    reservasViewModel.pestanaActual = "Calendario"
+                    navController.popBackStack()
+                }
             )
         }
         composable("calendarioEspacio/{espacio}") { backStackEntry ->
