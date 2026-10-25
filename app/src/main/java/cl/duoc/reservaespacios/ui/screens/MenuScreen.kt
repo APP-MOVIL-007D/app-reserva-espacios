@@ -1,8 +1,10 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -72,7 +74,27 @@ fun MenuScreen(
         visible = true
     }
 
-    // configurando acceso a camara y galeria
+    // Cargar Foto
+    LaunchedEffect(reservasViewModel.usuarioActual?.foto) {
+        val fotoGuardada = reservasViewModel.usuarioActual?.foto
+        if (!fotoGuardada.isNullOrEmpty() && menuViewModel.fotoBitmap == null) {
+            val imagenBitMap = menuViewModel.deTextoImagen(fotoGuardada)
+            if (imagenBitMap != null) {
+                menuViewModel.actualizarFoto(imagenBitMap)
+            }
+        }
+    }
+
+    // Actualizar y Guardar Foto
+    val actualizarYGuardarFoto: (Bitmap?) -> Unit = { bitmap ->
+        if (bitmap != null) {
+            menuViewModel.actualizarFoto(bitmap)
+            val imagenTexto = menuViewModel.deImagenTexto(bitmap)
+            reservasViewModel.actualizarFotoUsuario(imagenTexto)
+        }
+    }
+
+    // configurando acceso a galeria y camara
     val galeriaLauncher = rememberLauncherForActivityResult (
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -85,18 +107,14 @@ fun MenuScreen(
                 val source = ImageDecoder.createSource(context.contentResolver, it)
                 ImageDecoder.decodeBitmap(source)
             }
-            if (bitmap != null) {
-                menuViewModel.actualizarFoto(bitmap)
-            }
+            actualizarYGuardarFoto(bitmap)
         }
     }
 
     val camaraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
     ) { bitmap ->
-        bitmap?.let { miFoto ->
-            menuViewModel.actualizarFoto(miFoto)
-        }
+        actualizarYGuardarFoto(bitmap)
     }
 
     // Estructura del menu

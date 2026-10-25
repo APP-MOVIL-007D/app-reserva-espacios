@@ -75,6 +75,21 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         sesionRepository.cerrar()
     }
 
+    // Funcion para la Foto de Perfil
+    fun actualizarFotoUsuario(nuevaFoto: String) {
+        val usuario = usuarioActual
+        if (usuario != null) {
+            val index = usuarios.indexOfFirst { it.correo.equals(usuario.correo, ignoreCase = true) }
+            if (index != -1) {
+                val usuarioActualizado = usuario.copy(foto = nuevaFoto)
+                usuarios[index] = usuarioActualizado
+                viewModelScope.launch {
+                    usuarioRepository.actualizarUsuario(usuarioActualizado)
+                }
+            }
+        }
+    }
+
     init {
 
         viewModelScope.launch {

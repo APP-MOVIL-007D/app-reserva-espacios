@@ -9,4 +9,8 @@ class UsuarioRepository(private val dao: UsuarioDao){
         if (dao.obtenerTodos().isEmpty()) dao.insertarTodos(usuariosDePrueba)
         return dao.obtenerTodos()
     }
+
+    suspend fun actualizarUsuario(usuario: Usuario) {
+        dao.actualizar(usuario)
+    }
 }
