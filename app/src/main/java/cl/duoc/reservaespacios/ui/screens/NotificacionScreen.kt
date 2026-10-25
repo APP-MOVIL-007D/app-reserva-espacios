@@ -27,7 +27,7 @@ import cl.duoc.reservaespacios.ui.viewmodel.Notificacion
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
-fun NotificacionScreen2(
+fun NotificacionScreen(
     reservasViewModel: ReservasViewModel,
     modifier: Modifier = Modifier
 ) {
