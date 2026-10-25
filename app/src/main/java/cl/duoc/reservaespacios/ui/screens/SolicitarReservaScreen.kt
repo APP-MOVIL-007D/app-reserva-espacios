@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -31,7 +30,7 @@ import cl.duoc.reservaespacios.ui.viewmodel.BloqueHorario
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SolicitarReservaScreen2(
+fun SolicitarReservaScreen(
     viewModel: SolicitarReservaViewModel = viewModel (),
     modifier: Modifier = Modifier,
     // Parametros de navegacion iniciales
