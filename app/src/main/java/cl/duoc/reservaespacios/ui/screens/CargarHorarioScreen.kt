@@ -36,7 +36,7 @@ import cl.duoc.reservaespacios.ui.viewmodel.ArchivoCargado
 import cl.duoc.reservaespacios.ui.viewmodel.CargarHorarioViewModel
 
 @Composable
-fun CargarHorarioScreen2(
+fun CargarHorarioScreen(
     viewModel: CargarHorarioViewModel = viewModel (),
     modifier: Modifier = Modifier,
     onVolver: () -> Unit

@@ -80,7 +80,7 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
             )
         }
         composable("cargarHorario") {
-            CargarHorarioScreen(navController = navController)
+            CargarHorarioScreen ( onVolver = { navController.popBackStack() } )
         }
 
     }
