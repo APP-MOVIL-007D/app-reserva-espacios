@@ -1,11 +1,17 @@
 package cl.duoc.reservaespacios.ui.viewmodel
 
+import android.R
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cl.duoc.reservaespacios.data.repository.EspacioRepository
@@ -107,11 +113,51 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch { reservaRepository.actualizar(reservaCambiada) }
     }
 
+    // Notificaciones del sistema sobre si fue aprobado o no una reserva
+    private fun mostrarNotificacionSistema(titulo: String, mensaje: String) {
+        val context = getApplication<Application>()
+        val channelId = "reservas_channel_id"
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Notificaciones de Reservas",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Canal para notificaciones de aprobación y rechazo de reservas"
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_dialog_info)
+            .setContentTitle(titulo)
+            .setContentText(mensaje)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        try {
+            notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
+        } catch (_: SecurityException) {
+        }
+    }
+
     fun cancelar(reserva: Reserva) = actualizar(reserva.copy(estado = "Cancelada"))
 
-    fun aprobar(reserva: Reserva) = actualizar(reserva.copy(estado = "Aprobada"))
+    fun aprobar(reserva: Reserva) { actualizar(reserva.copy(estado = "Aprobada"))
+        mostrarNotificacionSistema(
+            "Reserva Aprobada",
+            "Tu reserva para ${reserva.espacio} el ${reserva.fecha} ha sido aprobada."
+        )
+    }
 
-    fun rechazar(reserva: Reserva) = actualizar(reserva.copy(estado = "Rechazada"))
+    fun rechazar(reserva: Reserva) { actualizar(reserva.copy(estado = "Rechazada"))
+        mostrarNotificacionSistema(
+            "Reserva Rechazada",
+            "Tu reserva para ${reserva.espacio} el ${reserva.fecha} ha sido rechazada."
+        )
+    }
 
     fun agregarReserva(
         espacio: String,
