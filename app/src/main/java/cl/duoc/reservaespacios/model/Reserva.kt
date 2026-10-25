@@ -2,6 +2,7 @@ package cl.duoc.reservaespacios.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import cl.duoc.reservaespacios.utils.fechaDesdeHoy
 
 @Entity(tableName = "reservas")
 data class Reserva(
@@ -17,7 +18,8 @@ data class Reserva(
 )
 
 val reservasDePrueba = listOf(
-    Reserva(1, "Sala S41", "15/10", "09:31 - 10:50", "Fundamentos de Antropología", "Aprobada"),
+    Reserva(1, "Laboratorio LC4", fechaDesdeHoy(1), "10:01 - 11:20", "Desarrollo de Aplicaciones Móviles", "Aprobada",
+        correoUsuario = "nan.bernal@profesor.duoc.cl"),
     Reserva(2, "Laboratorio LC5", "16/10", "11:01 - 12:20", "Fundamentos de Programación", "Aprobada"),
     Reserva(3, "Estudio Sonido 1", "17/10", "14:01 - 15:20", "Grabación de podcast", "Aprobada"),
     Reserva(4, "Sala S302", "20/10", "08:01 - 09:20", "Reunión de coordinación", "Pendiente"),

@@ -41,7 +41,7 @@ fun InicioScreen(
     onVerEspacio: (String) -> Unit = {}
 ) {
     // para el recuerdo, me demore 3 horas en reescribir el inicioscreen gracias ctrl+alt+l por existir
-    val proxima = reservasViewModel.reservas.firstOrNull { it.estado == "Aprobada" }
+    val proxima = reservasViewModel.proximaReserva
 
     val styleTitleLarge = MaterialTheme.typography.titleLarge
     val styleTitleMedium = MaterialTheme.typography.titleMedium
@@ -171,7 +171,7 @@ fun InicioScreen(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(proxima.espacio, style = styleTitleMedium)
                                 Text(
-                                    "${proxima.horario} - ${proxima.motivo}",
+                                    "${proxima.horario} · ${proxima.motivo}",
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }

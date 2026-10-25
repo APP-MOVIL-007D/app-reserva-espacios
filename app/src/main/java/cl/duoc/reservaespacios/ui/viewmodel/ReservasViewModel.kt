@@ -22,6 +22,9 @@ import cl.duoc.reservaespacios.data.room.AppDatabase
 import cl.duoc.reservaespacios.model.Espacio
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.model.Usuario
+import cl.duoc.reservaespacios.utils.fechaDesdeHoy
+import cl.duoc.reservaespacios.utils.numeroFecha
+import cl.duoc.reservaespacios.utils.numeroHora
 import kotlinx.coroutines.launch
 
 class ReservasViewModel(application: Application) : AndroidViewModel(application) {
@@ -52,6 +55,15 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
 
     val nombreUsuario: String get() = usuarioActual?.nombre ?: ""
 
+    val proximaReserva : Reserva? get() {
+        val hoy = numeroFecha(fechaDesdeHoy(0))
+        return reservas.filter{
+            it.correoUsuario.equals(correoUsuario, ignoreCase = true) &&
+                    it.estado == "Aprobada" && numeroFecha(it.fecha) >= hoy
+        }.minByOrNull { numeroFecha(it.fecha) * 10000 + numeroHora(it.horario) }
+    }
+
+    val misReservas : List<Reserva> get() = reservas.filter { it.correoUsuario.equals(correoUsuario, ignoreCase = true) }
     val inicialesUsuario: String
         get() {
             val usuario = usuarioActual

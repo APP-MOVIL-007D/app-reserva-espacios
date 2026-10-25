@@ -44,7 +44,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
         else -> "Rechazada"
     }
 
-    val reservasFiltradas = reservasViewModel.reservas.filter {
+    val reservasFiltradas = reservasViewModel.misReservas.filter {
         if (pestanaActual == 2) it.estado == "Rechazada" || it.estado == "Cancelada"
         else it.estado == estadoBuscado
     }
