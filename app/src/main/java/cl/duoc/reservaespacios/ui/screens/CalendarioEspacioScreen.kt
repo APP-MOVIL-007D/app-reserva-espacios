@@ -30,6 +30,14 @@ import java.util.Calendar
 import java.util.Locale
 import java.text.SimpleDateFormat
 
+fun horaStringAMinutos(hora: String): Int {
+    val partes = hora.trim().split(":")
+    if (partes.size == 2) {
+        return (partes[0].toIntOrNull() ?: 0) * 60 + (partes[1].toIntOrNull() ?: 0)
+    }
+    return 0
+}
+
 data class DiaSemana(val nombre: String, val numero: Int, val fechaCompleta: String, val esPasado: Boolean = false)
 data class Bloque(val horaInicio: String, val horaFin: String)
 
@@ -227,12 +235,24 @@ fun CalendarioEspacioScreenContent(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(bloquesBase) { bloque ->
                 
-                val horarioBloque = "${bloque.horaInicio} - ${bloque.horaFin}"
-                val reservaEncontrada = reservas.find {
-                    it.espacio == espacioNombre && 
-                    it.fecha == fechaSeleccionada && 
-                    it.horario == horarioBloque &&
-                    (it.estado == "Pendiente" || it.estado == "Aprobada")
+                val bloqueInicioMin = horaStringAMinutos(bloque.horaInicio)
+                val bloqueFinMin = horaStringAMinutos(bloque.horaFin)
+
+                val reservaEncontrada = reservas.find { r ->
+                    if (r.espacio == espacioNombre && r.fecha == fechaSeleccionada && (r.estado == "Pendiente" || r.estado == "Aprobada")) {
+                        val partes = r.horario.split("-").map { it.trim() }
+                        if (partes.size == 2) {
+                            val resInicioMin = horaStringAMinutos(partes[0])
+                            val resFinMin = horaStringAMinutos(partes[1])
+                            
+
+                            resInicioMin < bloqueFinMin && resFinMin > bloqueInicioMin
+                        } else {
+                            r.horario == "${bloque.horaInicio} - ${bloque.horaFin}"
+                        }
+                    } else {
+                        false
+                    }
                 }
 
                 val estadoBloque = when {
