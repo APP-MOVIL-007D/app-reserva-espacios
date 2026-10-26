@@ -91,6 +91,7 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
 
     fun cerrarSesion() {
         correoUsuario = ""
+        pestanaActual = "Inicio"
         sesionRepository.cerrar()
     }
 
