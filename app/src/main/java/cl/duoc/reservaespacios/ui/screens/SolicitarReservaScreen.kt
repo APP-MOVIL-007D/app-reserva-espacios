@@ -54,6 +54,7 @@ fun SolicitarReservaScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = modifier.height(25.dp))
         // Encabezado
         Row (
             verticalAlignment = Alignment.CenterVertically,
