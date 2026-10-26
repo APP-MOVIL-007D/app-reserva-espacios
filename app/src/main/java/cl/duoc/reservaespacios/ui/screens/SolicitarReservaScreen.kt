@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,10 +53,10 @@ fun SolicitarReservaScreen(
     Column (
         modifier = modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = modifier.height(25.dp))
         // Encabezado
         Row (
             verticalAlignment = Alignment.CenterVertically,
@@ -129,6 +131,9 @@ fun SolicitarReservaScreen(
             value = viewModel.motivo,
             onValueChange = { nuevoMotivo -> viewModel.cambiarMotivo(nuevoMotivo) },
             label = { Text("Motivo") },
+            isError = viewModel.errorMotivo != null,
+            supportingText = { viewModel.errorMotivo?.let { Text(it) } },
+            trailingIcon = {if (viewModel.errorMotivo != null) Icon(Icons.Filled.Error, contentDescription = "Error")},
             modifier = modifier.fillMaxWidth()
         )
 
@@ -144,6 +149,8 @@ fun SolicitarReservaScreen(
                         viewModel.obtenerHorarioFinal(),
                         viewModel.motivo
                     )
+                } else {
+                    viewModel.mensajeErrorMotivo("Por favor, ingrese un motivo para la reserva.")
                 }
             },
             modifier = modifier.fillMaxWidth()

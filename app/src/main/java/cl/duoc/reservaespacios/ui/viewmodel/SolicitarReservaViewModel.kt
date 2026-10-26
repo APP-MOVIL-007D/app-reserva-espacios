@@ -38,6 +38,10 @@ class SolicitarReservaViewModel : ViewModel() {
     var inicializado by mutableStateOf(false)
         private set
 
+    //
+    var errorMotivo by mutableStateOf<String?>(null)
+        private set
+
     fun cargarDatosIniciales(espacioParam: String, fechaParam: String, horaInicioParam: String) {
         if (!inicializado) {
             espacio = espacioParam
@@ -59,6 +63,11 @@ class SolicitarReservaViewModel : ViewModel() {
     // Funciones para interactuar con la interfaz
     fun cambiarMotivo(nuevoMotivo: String) {
         motivo = nuevoMotivo
+        errorMotivo = null
+    }
+
+    fun mensajeErrorMotivo(mensaje: String) {
+        errorMotivo = mensaje
     }
 
     fun alternarDropdownFin(abierto: Boolean) {
