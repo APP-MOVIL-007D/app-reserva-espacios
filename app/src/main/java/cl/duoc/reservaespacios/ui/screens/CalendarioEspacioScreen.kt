@@ -30,7 +30,15 @@ import java.util.Calendar
 import java.util.Locale
 import java.text.SimpleDateFormat
 
-data class DiaSemana(val nombre: String, val numero: Int, val fechaCompleta: String)
+fun horaStringAMinutos(hora: String): Int {
+    val partes = hora.trim().split(":")
+    if (partes.size == 2) {
+        return (partes[0].toIntOrNull() ?: 0) * 60 + (partes[1].toIntOrNull() ?: 0)
+    }
+    return 0
+}
+
+data class DiaSemana(val nombre: String, val numero: Int, val fechaCompleta: String, val esPasado: Boolean = false)
 data class Bloque(val horaInicio: String, val horaFin: String)
 
 @Composable
@@ -57,14 +65,19 @@ fun CalendarioEspacioScreenContent(
     onBackClick: () -> Unit,
     onSolicitarReserva: (String, String) -> Unit
 ) {
-    var fechaSeleccionada by remember { mutableStateOf("20/10") }
+    // .getInstance() va obtener la fecha actual del dispostivo.
+    val today = Calendar.getInstance()
+    val todayDiaStr = today.get(Calendar.DAY_OF_MONTH).toString().padStart(2, '0')
+    val todayMesStr = (today.get(Calendar.MONTH) + 1).toString().padStart(2, '0')
+    val todayAnioStr = today.get(Calendar.YEAR).toString()
+    val todayFechaStr = "$todayDiaStr/$todayMesStr/$todayAnioStr"
+
+    var fechaSeleccionada by remember { mutableStateOf(todayFechaStr) }
     var mesActualOffset by remember { mutableIntStateOf(0) }
 
     val calendario = Calendar.getInstance().apply {
-        set(Calendar.YEAR, 2026)
-        set(Calendar.MONTH, Calendar.OCTOBER)
-        set(Calendar.DAY_OF_MONTH, 1)
         add(Calendar.MONTH, mesActualOffset)
+        set(Calendar.DAY_OF_MONTH, 1)
     }
 
     val locCl = Locale.forLanguageTag("es-CL")
@@ -80,12 +93,27 @@ fun CalendarioEspacioScreenContent(
             set(Calendar.YEAR, anioActual)
             set(Calendar.MONTH, mesActual - 1)
             set(Calendar.DAY_OF_MONTH, dia)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
+        
+        val calToday = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        
+        val esPasado = calDia.timeInMillis < calToday.timeInMillis
+        
         val diaFormat = SimpleDateFormat("EEE", locCl)
         val nombre = diaFormat.format(calDia.time).replaceFirstChar { it.uppercase() }.take(3).replace(".", "")
         val diaStr = dia.toString().padStart(2, '0')
         val mesStr = mesActual.toString().padStart(2, '0')
-        DiaSemana(nombre, dia, "$diaStr/$mesStr")
+        val anioStr = anioActual.toString()
+        DiaSemana(nombre, dia, "$diaStr/$mesStr/$anioStr", esPasado)
     }
 
     val bloquesBase = listOf(
@@ -138,13 +166,13 @@ fun CalendarioEspacioScreenContent(
                     Row {
                         IconButton(
                             onClick = { mesActualOffset-- },
-                            enabled = mesActualOffset > -9
+                            enabled = mesActualOffset > 0
                         ) {
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Atras")
                         }
                         IconButton(
                             onClick = { mesActualOffset++ },
-                            enabled = mesActualOffset < 2
+                            enabled = mesActualOffset < 12
                         ) {
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Adelante")
                         }
@@ -162,14 +190,17 @@ fun CalendarioEspacioScreenContent(
                     for (dia in diasBase) {
                         val esSeleccionado = dia.fechaCompleta == fechaSeleccionada
                         
+                        val colorTextoBase = if (dia.esPasado) Color.Gray else MaterialTheme.colorScheme.onSurfaceVariant
+                        val colorNumeroBase = if (dia.esPasado) Color.Gray else MaterialTheme.colorScheme.onSurface
+
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { fechaSeleccionada = dia.fechaCompleta }
+                            modifier = Modifier.clickable(enabled = !dia.esPasado) { fechaSeleccionada = dia.fechaCompleta }
                         ) {
                             Text(
                                 text = dia.nombre,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (esSeleccionado) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (esSeleccionado) MaterialTheme.colorScheme.onSurface else colorTextoBase
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Box(
@@ -182,7 +213,7 @@ fun CalendarioEspacioScreenContent(
                                 Text(
                                     text = dia.numero.toString(),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = if (esSeleccionado) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
+                                    color = if (esSeleccionado) MaterialTheme.colorScheme.onSecondary else colorNumeroBase
                                 )
                             }
                         }
@@ -195,7 +226,8 @@ fun CalendarioEspacioScreenContent(
         
         val diaActual = diasBase.find { it.fechaCompleta == fechaSeleccionada }
         if (diaActual != null) {
-            Text("${diaActual.nombre} ${diaActual.numero}", style = MaterialTheme.typography.titleMedium)
+            val fechaVisual = diaActual.fechaCompleta.substringBeforeLast("/")
+            Text("${diaActual.nombre} ${diaActual.numero} ($fechaVisual)", style = MaterialTheme.typography.titleMedium)
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -203,12 +235,24 @@ fun CalendarioEspacioScreenContent(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(bloquesBase) { bloque ->
                 
-                val horarioBloque = "${bloque.horaInicio} - ${bloque.horaFin}"
-                val reservaEncontrada = reservas.find {
-                    it.espacio == espacioNombre && 
-                    it.fecha == fechaSeleccionada && 
-                    it.horario == horarioBloque &&
-                    (it.estado == "Pendiente" || it.estado == "Aprobada")
+                val bloqueInicioMin = horaStringAMinutos(bloque.horaInicio)
+                val bloqueFinMin = horaStringAMinutos(bloque.horaFin)
+
+                val reservaEncontrada = reservas.find { r ->
+                    if (r.espacio == espacioNombre && r.fecha == fechaSeleccionada && (r.estado == "Pendiente" || r.estado == "Aprobada")) {
+                        val partes = r.horario.split("-").map { it.trim() }
+                        if (partes.size == 2) {
+                            val resInicioMin = horaStringAMinutos(partes[0])
+                            val resFinMin = horaStringAMinutos(partes[1])
+                            
+
+                            resInicioMin < bloqueFinMin && resFinMin > bloqueInicioMin
+                        } else {
+                            r.horario == "${bloque.horaInicio} - ${bloque.horaFin}"
+                        }
+                    } else {
+                        false
+                    }
                 }
 
                 val estadoBloque = when {
