@@ -1,6 +1,7 @@
 package cl.duoc.reservaespacios.ui.screens
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -80,7 +81,11 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
                 )
             }
 
-            "Calendario" -> MisReservasScreen(reservasViewModel, modifier)
+            "Calendario" -> MisReservasScreen(
+                reservasViewModel,
+                if (reservasViewModel.esAdmin) modifier.consumeWindowInsets(innerPadding)
+                else Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+            )
             "Notificaciones" -> NotificacionScreen(reservasViewModel, modifier)
             "Menu" -> Box(modifier) {
                 val menuViewModel: MenuViewModel = viewModel()
