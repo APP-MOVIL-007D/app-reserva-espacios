@@ -79,12 +79,6 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     val rolUsuario: String get() = usuarioActual?.rol ?: ""
     val esAdmin: Boolean get() = rolUsuario == "Administrador"
 
-    //nuevo
-    fun existeUsuario(correo: String): Boolean = usuarios.any { it.correo == correo }
-
-    fun passwordCorrecta(correo: String, pass: String): Boolean =
-        usuarios.any { it.correo == correo && it.password == pass }
-
     fun iniciarSesion(correo: String) {
         correoUsuario = correo
         sesionRepository.guardarCorreo(correo)

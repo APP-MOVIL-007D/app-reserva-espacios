@@ -10,6 +10,8 @@ class UsuarioRepository(private val dao: UsuarioDao){
         return dao.obtenerTodos()
     }
 
+    suspend fun buscarPorCorreo(correo: String): Usuario? = dao.buscarPorCorreo(correo)
+
     suspend fun actualizarUsuario(usuario: Usuario) {
         dao.actualizar(usuario)
     }

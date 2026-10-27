@@ -35,24 +35,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
 import cl.duoc.reservaespacios.ui.componentes.CampoPassword
+import cl.duoc.reservaespacios.ui.viewmodel.LoginViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
-import cl.duoc.reservaespacios.utils.validarCorreo
-import cl.duoc.reservaespacios.utils.validarPassword
 
 @Composable
 fun LoginScreen(
     reservasViewModel: ReservasViewModel,
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    loginViewModel: LoginViewModel = viewModel()
 ) {
 
-    var correo by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorCorreo by remember { mutableStateOf<String?>(null) }
-    var errorPassword by remember { mutableStateOf<String?>(null) }
+    val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     var mostrarRecuperar by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -88,16 +87,13 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = correo,
-            onValueChange = {
-                correo = it
-                errorCorreo = null
-            },
+            value = uiState.correo,
+            onValueChange = loginViewModel::onCorreoChange,
             label = { Text("Correo Duoc") },
-            isError = errorCorreo != null,
-            supportingText = { errorCorreo?.let { Text(it) } },
+            isError = uiState.errorCorreo != null,
+            supportingText = { uiState.errorCorreo?.let { Text(it) } },
             trailingIcon = {
-                if (errorCorreo != null) Icon(
+                if (uiState.errorCorreo != null) Icon(
                     Icons.Filled.Error, contentDescription = "Error"
                 )
             },
@@ -107,11 +103,9 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         CampoPassword(
-            value = password, onValueChange = {
-                password = it
-                errorPassword = null
-            },
-            errorTexto = errorPassword,
+            value = uiState.password,
+            onValueChange = loginViewModel::onPasswordChange,
+            errorTexto = uiState.errorPassword,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -120,29 +114,11 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                errorCorreo = validarCorreo(correo)
-                errorPassword = validarPassword(password)
-
-
-                if (errorCorreo == null && errorPassword == null) {
-
-                    val correoLimpio = correo.trim().lowercase()
-                    when {
-                        !reservasViewModel.existeUsuario(correoLimpio) -> errorCorreo =
-                            "Usuario no registrado"
-
-                        !reservasViewModel.passwordCorrecta(
-                            correoLimpio,
-                            password
-                        ) -> errorPassword = "Contraseña incorrecta"
-
-                        else -> {
-                            reservasViewModel.iniciarSesion(correoLimpio)
-                            Toast.makeText(context, "Bienvenido/a ", Toast.LENGTH_SHORT).show()
-                            navController.navigate("principal") {
-                                popUpTo("login") { inclusive = true }
-                            }
-                        }
+                loginViewModel.ingresar { correoLimpio ->
+                    reservasViewModel.iniciarSesion(correoLimpio)
+                    Toast.makeText(context, "Bienvenido/a ", Toast.LENGTH_SHORT).show()
+                    navController.navigate("principal") {
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             },

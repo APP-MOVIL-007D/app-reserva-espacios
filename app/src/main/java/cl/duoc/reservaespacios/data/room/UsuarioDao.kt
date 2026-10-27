@@ -12,6 +12,9 @@ interface UsuarioDao{
     @Query("SELECT * FROM usuarios")
     suspend fun obtenerTodos() : List<Usuario>
 
+    @Query("SELECT * FROM usuarios WHERE correo = :correo")
+    suspend fun buscarPorCorreo(correo: String): Usuario?
+
     @Insert
     suspend fun insertarTodos(usuarios: List<Usuario>)
 
