@@ -4,19 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-
-data class BloqueHorario(val horaInicio: String, val horaFin: String)
+import cl.duoc.reservaespacios.utils.BLOQUES_HORARIOS_BASE
+import cl.duoc.reservaespacios.utils.BloqueHorario
 
 class SolicitarReservaViewModel : ViewModel() {
-
-    // Datos base
-    private val bloquesBase = listOf(
-        BloqueHorario("08:31", "09:50"),
-        BloqueHorario("10:01", "11:20"),
-        BloqueHorario("11:31", "12:50"),
-        BloqueHorario("13:01", "14:20"),
-        BloqueHorario("14:31", "15:50")
-    )
 
     // Estados del formulario
     var espacio by mutableStateOf("")
@@ -49,15 +40,15 @@ class SolicitarReservaViewModel : ViewModel() {
             horaInicio = horaInicioParam.ifEmpty { "08:31" }
 
             // Asigna el primer bloque de fin disponible como valor por defecto
-            horaFinSeleccionada = obtenerBloquesFinDisponibles().firstOrNull()?.horaFin ?: bloquesBase.first().horaFin
+            horaFinSeleccionada = obtenerBloquesFinDisponibles().firstOrNull()?.horaFin ?: BLOQUES_HORARIOS_BASE.first().horaFin
 
             inicializado = true
         }
     }
 
-    // Retorna los bloques de fin que sean mayores o iguales a la hora de inicio seleccionada
+    // Retorna los bloques de fin que sean mayores o iguales a la hora de inicio seleccionada usando BLOQUES_HORARIOS_BASE
     fun obtenerBloquesFinDisponibles(): List<BloqueHorario> {
-        return bloquesBase.filter { it.horaFin >= horaInicio }
+        return BLOQUES_HORARIOS_BASE.filter { it.horaFin >= horaInicio }
     }
 
     // Funciones para interactuar con la interfaz
