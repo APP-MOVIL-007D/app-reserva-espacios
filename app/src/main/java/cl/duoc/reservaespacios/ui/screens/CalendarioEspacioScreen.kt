@@ -1,19 +1,22 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package cl.duoc.reservaespacios.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,25 +26,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.model.Reserva
+import cl.duoc.reservaespacios.ui.viewmodel.CalendarioEspacioViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.utils.BLOQUES_HORARIOS_BASE
 import java.util.Calendar
-import java.util.Locale
-import java.text.SimpleDateFormat
-
-data class DiaSemana(val nombre: String, val numero: Int, val fechaCompleta: String)
-data class Bloque(val horaInicio: String, val horaFin: String)
+import java.util.TimeZone
 
 @Composable
 fun CalendarioEspacioScreen(
     navController: NavController,
     reservasViewModel: ReservasViewModel,
-    espacioNombre: String
+    espacioNombre: String,
+    calendarioViewModel: CalendarioEspacioViewModel = viewModel()
 ) {
     CalendarioEspacioScreenContent(
         espacioNombre = espacioNombre,
         reservas = reservasViewModel.reservas,
+        calendarioViewModel = calendarioViewModel,
         onBackClick = { navController.popBackStack() },
         onSolicitarReserva = { fecha, horaInicio -> 
             val fechaEncoded = fecha.replace("/", "-")
@@ -54,59 +58,80 @@ fun CalendarioEspacioScreen(
 fun CalendarioEspacioScreenContent(
     espacioNombre: String,
     reservas: List<Reserva>,
+    calendarioViewModel: CalendarioEspacioViewModel,
     onBackClick: () -> Unit,
     onSolicitarReserva: (String, String) -> Unit
 ) {
-    var fechaSeleccionada by remember { mutableStateOf("20/10") }
-    var mesActualOffset by remember { mutableIntStateOf(0) }
+    val textoMesAnio = calendarioViewModel.obtenerTextoMesAnio()
+    val diasBase = remember(calendarioViewModel.mesActualOffset) { calendarioViewModel.generarDiasDelMes() }
+    val fechaSeleccionada = calendarioViewModel.fechaSeleccionada
+    var mostrarDatePicker by remember { mutableStateOf(false) }
 
-    val calendario = Calendar.getInstance().apply {
-        set(Calendar.YEAR, 2026)
-        set(Calendar.MONTH, Calendar.OCTOBER)
-        set(Calendar.DAY_OF_MONTH, 1)
-        add(Calendar.MONTH, mesActualOffset)
-    }
+    val lazyListState = rememberLazyListState()
 
-    val locCl = Locale.forLanguageTag("es-CL")
-    val mesFormat = SimpleDateFormat("MMMM yyyy", locCl)
-    val textoMesAnio = mesFormat.format(calendario.time).replaceFirstChar { it.uppercase() }
-
-    val diasDelMes = calendario.getActualMaximum(Calendar.DAY_OF_MONTH)
-    val anioActual = calendario.get(Calendar.YEAR)
-    val mesActual = calendario.get(Calendar.MONTH) + 1
-
-    val diasBase = (1..diasDelMes).map { dia ->
-        val calDia = Calendar.getInstance().apply {
-            set(Calendar.YEAR, anioActual)
-            set(Calendar.MONTH, mesActual - 1)
-            set(Calendar.DAY_OF_MONTH, dia)
+    // Auto-scroll al día seleccionado (solo si el día NO ha pasado)
+    LaunchedEffect(fechaSeleccionada, calendarioViewModel.mesActualOffset) {
+        val indiceSeleccionado = diasBase.indexOfFirst { it.fechaCompleta == fechaSeleccionada }
+        if (indiceSeleccionado >= 0) {
+            val diaSeleccionado = diasBase[indiceSeleccionado]
+            if (!diaSeleccionado.esPasado) {
+                lazyListState.animateScrollToItem(index = indiceSeleccionado, scrollOffset = -150)
+            }
         }
-        val diaFormat = SimpleDateFormat("EEE", locCl)
-        val nombre = diaFormat.format(calDia.time).replaceFirstChar { it.uppercase() }.take(3).replace(".", "")
-        val diaStr = dia.toString().padStart(2, '0')
-        val mesStr = mesActual.toString().padStart(2, '0')
-        DiaSemana(nombre, dia, "$diaStr/$mesStr")
     }
 
-    val bloquesBase = listOf(
-        Bloque("08:31", "09:50"),
-        Bloque("10:01", "11:20"),
-        Bloque("11:31", "12:50"),
-        Bloque("13:01", "14:20"),
-        Bloque("14:31", "15:50")
-    )
+    if (mostrarDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = System.currentTimeMillis(),
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    val calSelected = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = utcTimeMillis }
+                    val calToday = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }
+                    return calSelected.timeInMillis >= calToday.timeInMillis
+                }
+            }
+        )
+
+        DatePickerDialog(
+            onDismissRequest = { mostrarDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        calendarioViewModel.seleccionarFechaDesdePicker(millis)
+                    }
+                    mostrarDatePicker = false
+                }) {
+                    Text("Aceptar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { mostrarDatePicker = false }) {
+                    Text("Cancelar")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Encabezado
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
@@ -120,6 +145,7 @@ fun CalendarioEspacioScreenContent(
             Spacer(modifier = Modifier.width(48.dp))
         }
 
+        // Tarjeta con Navegación de Meses e Ícono de DatePicker
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -132,44 +158,62 @@ fun CalendarioEspacioScreenContent(
                 ) {
                     Text(
                         text = textoMesAnio,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
 
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { mostrarDatePicker = true }) {
+                            Icon(
+                                Icons.Default.DateRange,
+                                contentDescription = "Seleccionar fecha"
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
                         IconButton(
-                            onClick = { mesActualOffset-- },
-                            enabled = mesActualOffset > -9
+                            onClick = { calendarioViewModel.retrocederMes() },
+                            enabled = calendarioViewModel.mesActualOffset > 0
                         ) {
-                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Atras")
+                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Atrás")
                         }
                         IconButton(
-                            onClick = { mesActualOffset++ },
-                            enabled = mesActualOffset < 2
+                            onClick = { calendarioViewModel.avanzarMes() },
+                            enabled = calendarioViewModel.mesActualOffset < 12
                         ) {
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Adelante")
                         }
                     }
                 }
-                
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), thickness = 2.dp, color = MaterialTheme.colorScheme.secondary)
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    thickness = 2.dp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+
+                LazyRow(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
                 ) {
-                    for (dia in diasBase) {
+                    items(diasBase) { dia ->
                         val esSeleccionado = dia.fechaCompleta == fechaSeleccionada
-                        
+                        val colorTextoBase = if (dia.esPasado) Color.Gray else MaterialTheme.colorScheme.onSurfaceVariant
+                        val colorNumeroBase = if (dia.esPasado) Color.Gray else MaterialTheme.colorScheme.onSurface
+
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { fechaSeleccionada = dia.fechaCompleta }
+                            modifier = Modifier.clickable(enabled = !dia.esPasado) {
+                                calendarioViewModel.cambiarFechaSeleccionada(dia.fechaCompleta)
+                            }
                         ) {
                             Text(
                                 text = dia.nombre,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (esSeleccionado) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                                color = if (esSeleccionado) MaterialTheme.colorScheme.onSurface else colorTextoBase
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Box(
@@ -182,7 +226,7 @@ fun CalendarioEspacioScreenContent(
                                 Text(
                                     text = dia.numero.toString(),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = if (esSeleccionado) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface
+                                    color = if (esSeleccionado) MaterialTheme.colorScheme.onSecondary else colorNumeroBase
                                 )
                             }
                         }
@@ -192,57 +236,49 @@ fun CalendarioEspacioScreenContent(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         val diaActual = diasBase.find { it.fechaCompleta == fechaSeleccionada }
         if (diaActual != null) {
-            Text("${diaActual.nombre} ${diaActual.numero}", style = MaterialTheme.typography.titleMedium)
+            val fechaVisual = diaActual.fechaCompleta.substringBeforeLast("/")
+            Text(
+                text = "${diaActual.nombre} ${diaActual.numero} ($fechaVisual)",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(bloquesBase) { bloque ->
-                
-                val horarioBloque = "${bloque.horaInicio} - ${bloque.horaFin}"
-                val reservaEncontrada = reservas.find {
-                    it.espacio == espacioNombre && 
-                    it.fecha == fechaSeleccionada && 
-                    it.horario == horarioBloque &&
-                    (it.estado == "Pendiente" || it.estado == "Aprobada")
-                }
+            items(BLOQUES_HORARIOS_BASE) { bloque ->
+                val estadoBloque = calendarioViewModel.obtenerEstadoBloque(bloque, espacioNombre, reservas)
 
-                val estadoBloque = when {
-                    reservaEncontrada != null -> reservaEncontrada.estado
-                    else -> "Disponible"
-                }
+                var tituloBoton = "Disponible"
+                var subtitulo = "Toca para solicitar"
+                var colorFondo = MaterialTheme.colorScheme.surface
+                var colorBorde = MaterialTheme.colorScheme.primary
+                var colorTexto = MaterialTheme.colorScheme.onSurface
 
-                val tituloBoton = when (estadoBloque) {
-                    "Aprobada" -> "Reservado"
-                    "Pendiente" -> "Pendiente"
-                    else -> "Disponible"
-                }
-
-                val subtitulo = when (estadoBloque) {
-                    "Aprobada" -> "No disponible"
-                    "Pendiente" -> "Esperando aprobación"
-                    else -> "Toca para solicitar"
-                }
-
-                val colorFondo = when (estadoBloque) {
-                    "Aprobada" -> MaterialTheme.colorScheme.onSurface
-                    "Pendiente" -> MaterialTheme.colorScheme.secondaryContainer
-                    else -> MaterialTheme.colorScheme.surface
-                }
-                
-                val colorBorde = when (estadoBloque) {
-                    "Disponible" -> MaterialTheme.colorScheme.primary
-                    "Pendiente" -> MaterialTheme.colorScheme.secondary
-                    else -> Color.Transparent
-                }
-
-                val colorTexto = when (estadoBloque) {
-                    "Aprobada" -> MaterialTheme.colorScheme.surface
-                    else -> MaterialTheme.colorScheme.onSurface
+                when (estadoBloque) {
+                    "Aprobada" -> {
+                        tituloBoton = "Reservado"
+                        subtitulo = "No disponible"
+                        colorFondo = MaterialTheme.colorScheme.onSurface
+                        colorBorde = Color.Transparent
+                        colorTexto = MaterialTheme.colorScheme.surface
+                    }
+                    "Pendiente" -> {
+                        tituloBoton = "Pendiente"
+                        subtitulo = "Esperando aprobación"
+                        colorFondo = MaterialTheme.colorScheme.secondaryContainer
+                        colorBorde = MaterialTheme.colorScheme.secondary
+                    }
+                    "Pasado" -> {
+                        tituloBoton = "Expirado"
+                        subtitulo = "Horario pasado"
+                        colorFondo = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        colorBorde = Color.Transparent
+                        colorTexto = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    }
                 }
 
                 Row(
@@ -255,9 +291,9 @@ fun CalendarioEspacioScreenContent(
                         Text(bloque.horaInicio, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                         Text(bloque.horaFin, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    
+
                     Spacer(modifier = Modifier.width(16.dp))
-                    
+
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -271,14 +307,14 @@ fun CalendarioEspacioScreenContent(
                     ) {
                         Column(modifier = Modifier.padding(start = 16.dp)) {
                             Text(
-                                text = tituloBoton, 
-                                style = MaterialTheme.typography.bodyLarge, 
-                                fontWeight = FontWeight.Bold, 
+                                text = tituloBoton,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
                                 color = colorTexto
                             )
                             Text(
-                                text = subtitulo, 
-                                style = MaterialTheme.typography.bodySmall, 
+                                text = subtitulo,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = if (estadoBloque == "Disponible") MaterialTheme.colorScheme.primary else colorTexto.copy(alpha = 0.7f)
                             )
                         }
@@ -288,37 +324,3 @@ fun CalendarioEspacioScreenContent(
         }
     }
 }
-
-/*
-
-@Preview(showBackground = true)
-@Composable
-fun CalendarioEspacioScreenPreview() {
-    ReservaEspaciosTheme {
-        CalendarioEspacioScreenContent(
-            espacioNombre = "Sala 1",
-            reservas = listOf(
-                Reserva(
-                    id = 1,
-                    espacio = "Sala 1",
-                    fecha = "2026-10-20",
-                    horario = "08:31 - 09:50",
-                    motivo = "Clase",
-                    estado = "Pendiente"
-                ),
-                Reserva(
-                    id = 2,
-                    espacio = "Sala 1",
-                    fecha = "2026-10-20",
-                    horario = "10:01 - 11:20",
-                    motivo = "Reunión",
-                    estado = "Aprobada"
-                )
-            ),
-            onBackClick = {},
-            onSolicitarReserva = {}
-        )
-    }
-}
-
- */
