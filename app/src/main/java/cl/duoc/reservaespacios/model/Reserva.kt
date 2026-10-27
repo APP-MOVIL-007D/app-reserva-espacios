@@ -17,16 +17,24 @@ data class Reserva(
     val horaIngreso : String = ""
 )
 
+private const val NANCY = "nan.bernal@profesor.duoc.cl"
+private const val JAVIER = "jav.pena@profesor.duoc.cl"
+private const val LEONARDO = "leo.hernandez@profesor.duoc.cl"
+private const val NATALIA = "nat.herrera@profesor.duoc.cl"
+private const val VERONICA = "ver.lobos@profesor.duoc.cl"
+private const val MARIA_JESUS = "mar.alvarez@profesor.duoc.cl"
+private const val ALEJANDRA = "agajardo@duoc.cl"
+
 val reservasDePrueba = listOf(
-    Reserva(1, "Laboratorio LC4", fechaDesdeHoy(1), "10:01 - 11:20", "Desarrollo de Aplicaciones Móviles", "Aprobada",
-        correoUsuario = "nan.bernal@profesor.duoc.cl"),
-    Reserva(2, "Laboratorio LC5", "16/10", "11:01 - 12:20", "Fundamentos de Programación", "Aprobada"),
-    Reserva(3, "Estudio Sonido 1", "17/10", "14:01 - 15:20", "Grabación de podcast", "Aprobada"),
-    Reserva(4, "Sala S302", "20/10", "08:01 - 09:20", "Reunión de coordinación", "Pendiente"),
-    Reserva(5, "Set TV", "21/10", "12:31 - 13:50", "Práctica de cámara", "Pendiente"),
-    Reserva(6, "Anfiteatro", "23/10", "15:31 - 16:50", "Charla de titulación", "Pendiente"),
-    Reserva(7, "Sala S604", "14/10", "09:31 - 10:50", "Ayudantía de matemáticas", "Rechazada"),
-    Reserva(8, "Salas de Actuación", "18/10", "11:01 - 12:20", "Ensayo de teatro", "Rechazada"),
-    Reserva(9, "Laboratorio de Diseño", "15/10", "14:01 - 15:20", "Revisión de portafolio", "Cancelada"),
-    Reserva(10, "Sala S54", "22/10", "08:01 - 09:20", "La Sociedad del Futuro", "Cancelada")
+    Reserva(1, "Laboratorio LC4", fechaDesdeHoy(0), "14:31 - 15:50", "Recuperación de clase DSY1105", "Aprobada", NANCY),
+    Reserva(2, "Laboratorio LC5", fechaDesdeHoy(3), "10:01 - 11:20", "Ayudantía de Aplicaciones Móviles", "Pendiente", NANCY),
+    Reserva(3, "Laboratorio LC3", fechaDesdeHoy(2), "08:31 - 09:50", "Prueba atrasada de Estadística", "Pendiente", NATALIA),
+    Reserva(4, "Laboratorio LC5", fechaDesdeHoy(1), "13:01 - 14:20", "Revisión de proyecto Fullstack", "Aprobada", JAVIER),
+    Reserva(5, "Sala S81", fechaDesdeHoy(4), "14:31 - 15:50", "Ayudantía de inglés", "Pendiente", VERONICA),
+    Reserva(6, "Sala S81", fechaDesdeHoy(4), "14:31 - 15:50", "Taller de conversación", "Pendiente", MARIA_JESUS),
+    Reserva(7, "Laboratorio LC5", fechaDesdeHoy(5), "08:31 - 09:50", "Reforzamiento de Base de Datos", "Aprobada", LEONARDO),
+    Reserva(8, "Anfiteatro", fechaDesdeHoy(8), "11:31 - 12:50", "Charla de titulación", "Pendiente", ALEJANDRA),
+    Reserva(9, "Laboratorio LC4", fechaDesdeHoy(-3), "08:31 - 09:50", "Recuperación de clase DSY1105", "Cancelada", NANCY),
+    Reserva(10, "Sala S608", fechaDesdeHoy(-5), "11:31 - 12:50", "Ensayo de presentaciones", "Rechazada", NANCY),
+    Reserva(11, "Laboratorio LC4", fechaDesdeHoy(7), "10:01 - 11:20", "Clase de reforzamiento DSY1105", "Aprobada", NANCY)
 )
