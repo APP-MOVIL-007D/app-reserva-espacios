@@ -1,8 +1,14 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
@@ -15,12 +21,17 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.ui.componentes.BarraAdmin
@@ -53,17 +64,34 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
             }
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                 pestanas.forEach { pestana ->
+                    val seleccionada = reservasViewModel.pestanaActual == pestana.nombre
                     NavigationBarItem(
-                        selected = reservasViewModel.pestanaActual == pestana.nombre,
+                        selected = seleccionada,
                         onClick = { reservasViewModel.pestanaActual = pestana.nombre },
                         icon = {
-                            Icon(
-                                imageVector = if (reservasViewModel.pestanaActual == pestana.nombre) pestana.iconoFull else pestana.iconoVacio,
-                                contentDescription = pestana.nombre
-                            )
-                        }
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = if (seleccionada) pestana.iconoFull else pestana.iconoVacio,
+                                    contentDescription = pestana.nombre
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 16.dp, height = 3.dp)
+                                        .background(
+                                            if (seleccionada) MaterialTheme.colorScheme.secondary else Color.Transparent,
+                                            RoundedCornerShape(50)
+                                        )
+                                )
+                            }
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = Color.Transparent,
+                            selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     )
                 }
             }
