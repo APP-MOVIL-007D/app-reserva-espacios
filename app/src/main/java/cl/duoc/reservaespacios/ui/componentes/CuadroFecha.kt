@@ -19,7 +19,7 @@ fun CuadroFecha(fecha: String, modifier : Modifier = Modifier){
         listOf("ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC")
 
     val dia = fecha.substringBefore("/")
-    val numeroMes = fecha.substringAfter("/").toIntOrNull()?:1
+    val numeroMes = fecha.split("/").getOrNull(1)?.toIntOrNull() ?: 1
     val mes = meses.getOrElse(numeroMes - 1) { " "}
 
     Surface(

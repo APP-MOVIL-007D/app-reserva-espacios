@@ -61,7 +61,7 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         return reservas.filter{
             it.correoUsuario.equals(correoUsuario, ignoreCase = true) &&
                     it.estado == "Aprobada" && numeroFecha(it.fecha) >= hoy
-        }.minByOrNull { numeroFecha(it.fecha) * 10000 + numeroHora(it.horario) }
+        }.minByOrNull { numeroFecha(it.fecha).toLong() * 10000 + numeroHora(it.horario) }
     }
 
     val misReservas : List<Reserva> get() = reservas.filter { it.correoUsuario.equals(correoUsuario, ignoreCase = true) }
