@@ -23,33 +23,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.model.Reserva
+import cl.duoc.reservaespacios.ui.viewmodel.CalendarioEspacioViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
-import java.util.Calendar
-import java.util.Locale
-import java.text.SimpleDateFormat
-
-fun horaStringAMinutos(hora: String): Int {
-    val partes = hora.trim().split(":")
-    if (partes.size == 2) {
-        return (partes[0].toIntOrNull() ?: 0) * 60 + (partes[1].toIntOrNull() ?: 0)
-    }
-    return 0
-}
-
-data class DiaSemana(val nombre: String, val numero: Int, val fechaCompleta: String, val esPasado: Boolean = false)
-data class Bloque(val horaInicio: String, val horaFin: String)
+import cl.duoc.reservaespacios.utils.BLOQUES_HORARIOS_BASE
 
 @Composable
 fun CalendarioEspacioScreen(
     navController: NavController,
     reservasViewModel: ReservasViewModel,
-    espacioNombre: String
+    espacioNombre: String,
+    calendarioViewModel: CalendarioEspacioViewModel = viewModel()
 ) {
     CalendarioEspacioScreenContent(
         espacioNombre = espacioNombre,
         reservas = reservasViewModel.reservas,
+        calendarioViewModel = calendarioViewModel,
         onBackClick = { navController.popBackStack() },
         onSolicitarReserva = { fecha, horaInicio -> 
             val fechaEncoded = fecha.replace("/", "-")
@@ -62,67 +53,13 @@ fun CalendarioEspacioScreen(
 fun CalendarioEspacioScreenContent(
     espacioNombre: String,
     reservas: List<Reserva>,
+    calendarioViewModel: CalendarioEspacioViewModel,
     onBackClick: () -> Unit,
     onSolicitarReserva: (String, String) -> Unit
 ) {
-    // .getInstance() va obtener la fecha actual del dispostivo.
-    val today = Calendar.getInstance()
-    val todayDiaStr = today.get(Calendar.DAY_OF_MONTH).toString().padStart(2, '0')
-    val todayMesStr = (today.get(Calendar.MONTH) + 1).toString().padStart(2, '0')
-    val todayAnioStr = today.get(Calendar.YEAR).toString()
-    val todayFechaStr = "$todayDiaStr/$todayMesStr/$todayAnioStr"
-
-    var fechaSeleccionada by remember { mutableStateOf(todayFechaStr) }
-    var mesActualOffset by remember { mutableIntStateOf(0) }
-
-    val calendario = Calendar.getInstance().apply {
-        add(Calendar.MONTH, mesActualOffset)
-        set(Calendar.DAY_OF_MONTH, 1)
-    }
-
-    val locCl = Locale.forLanguageTag("es-CL")
-    val mesFormat = SimpleDateFormat("MMMM yyyy", locCl)
-    val textoMesAnio = mesFormat.format(calendario.time).replaceFirstChar { it.uppercase() }
-
-    val diasDelMes = calendario.getActualMaximum(Calendar.DAY_OF_MONTH)
-    val anioActual = calendario.get(Calendar.YEAR)
-    val mesActual = calendario.get(Calendar.MONTH) + 1
-
-    val diasBase = (1..diasDelMes).map { dia ->
-        val calDia = Calendar.getInstance().apply {
-            set(Calendar.YEAR, anioActual)
-            set(Calendar.MONTH, mesActual - 1)
-            set(Calendar.DAY_OF_MONTH, dia)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        
-        val calToday = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        
-        val esPasado = calDia.timeInMillis < calToday.timeInMillis
-        
-        val diaFormat = SimpleDateFormat("EEE", locCl)
-        val nombre = diaFormat.format(calDia.time).replaceFirstChar { it.uppercase() }.take(3).replace(".", "")
-        val diaStr = dia.toString().padStart(2, '0')
-        val mesStr = mesActual.toString().padStart(2, '0')
-        val anioStr = anioActual.toString()
-        DiaSemana(nombre, dia, "$diaStr/$mesStr/$anioStr", esPasado)
-    }
-
-    val bloquesBase = listOf(
-        Bloque("08:31", "09:50"),
-        Bloque("10:01", "11:20"),
-        Bloque("11:31", "12:50"),
-        Bloque("13:01", "14:20"),
-        Bloque("14:31", "15:50")
-    )
+    val textoMesAnio = calendarioViewModel.obtenerTextoMesAnio()
+    val diasBase = remember(calendarioViewModel.mesActualOffset) { calendarioViewModel.generarDiasDelMes() }
+    val fechaSeleccionada = calendarioViewModel.fechaSeleccionada
 
     Column(
         modifier = Modifier
@@ -165,14 +102,14 @@ fun CalendarioEspacioScreenContent(
 
                     Row {
                         IconButton(
-                            onClick = { mesActualOffset-- },
-                            enabled = mesActualOffset > 0
+                            onClick = { calendarioViewModel.retrocederMes() },
+                            enabled = calendarioViewModel.mesActualOffset > 0
                         ) {
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Atras")
                         }
                         IconButton(
-                            onClick = { mesActualOffset++ },
-                            enabled = mesActualOffset < 12
+                            onClick = { calendarioViewModel.avanzarMes() },
+                            enabled = calendarioViewModel.mesActualOffset < 12
                         ) {
                             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Adelante")
                         }
@@ -195,7 +132,7 @@ fun CalendarioEspacioScreenContent(
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable(enabled = !dia.esPasado) { fechaSeleccionada = dia.fechaCompleta }
+                            modifier = Modifier.clickable(enabled = !dia.esPasado) { calendarioViewModel.cambiarFechaSeleccionada(dia.fechaCompleta) }
                         ) {
                             Text(
                                 text = dia.nombre,
@@ -233,32 +170,9 @@ fun CalendarioEspacioScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(bloquesBase) { bloque ->
+            items(BLOQUES_HORARIOS_BASE) { bloque ->
                 
-                val bloqueInicioMin = horaStringAMinutos(bloque.horaInicio)
-                val bloqueFinMin = horaStringAMinutos(bloque.horaFin)
-
-                val reservaEncontrada = reservas.find { r ->
-                    if (r.espacio == espacioNombre && r.fecha == fechaSeleccionada && (r.estado == "Pendiente" || r.estado == "Aprobada")) {
-                        val partes = r.horario.split("-").map { it.trim() }
-                        if (partes.size == 2) {
-                            val resInicioMin = horaStringAMinutos(partes[0])
-                            val resFinMin = horaStringAMinutos(partes[1])
-                            
-
-                            resInicioMin < bloqueFinMin && resFinMin > bloqueInicioMin
-                        } else {
-                            r.horario == "${bloque.horaInicio} - ${bloque.horaFin}"
-                        }
-                    } else {
-                        false
-                    }
-                }
-
-                val estadoBloque = when {
-                    reservaEncontrada != null -> reservaEncontrada.estado
-                    else -> "Disponible"
-                }
+                val estadoBloque = calendarioViewModel.obtenerEstadoBloque(bloque, espacioNombre, reservas)
 
                 val tituloBoton = when (estadoBloque) {
                     "Aprobada" -> "Reservado"
@@ -333,36 +247,3 @@ fun CalendarioEspacioScreenContent(
     }
 }
 
-/*
-
-@Preview(showBackground = true)
-@Composable
-fun CalendarioEspacioScreenPreview() {
-    ReservaEspaciosTheme {
-        CalendarioEspacioScreenContent(
-            espacioNombre = "Sala 1",
-            reservas = listOf(
-                Reserva(
-                    id = 1,
-                    espacio = "Sala 1",
-                    fecha = "2026-10-20",
-                    horario = "08:31 - 09:50",
-                    motivo = "Clase",
-                    estado = "Pendiente"
-                ),
-                Reserva(
-                    id = 2,
-                    espacio = "Sala 1",
-                    fecha = "2026-10-20",
-                    horario = "10:01 - 11:20",
-                    motivo = "Reunión",
-                    estado = "Aprobada"
-                )
-            ),
-            onBackClick = {},
-            onSolicitarReserva = {}
-        )
-    }
-}
-
- */
