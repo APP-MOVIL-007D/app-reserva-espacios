@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -43,11 +44,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cl.duoc.reservaespacios.ui.theme.Rojo
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
@@ -128,14 +131,6 @@ fun MenuScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton (
-                onClick = { menuViewModel.pedirCerrarSesion() }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "CerrarSesion"
-                )
-            }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Mi Perfil",
@@ -183,6 +178,21 @@ fun MenuScreen(
             text = nombre,
             style = styleTitleMedium
         )
+
+        TextButton (
+            onClick = { menuViewModel.pedirCerrarSesion() }
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                tint = Rojo,
+                contentDescription = "CerrarSesion"
+            )
+            Text(
+                text = "Cerrar Sesión",
+                style = styleTitleMedium,
+                color = Rojo
+            )
+        }
 
         Spacer(modifier = Modifier.height(40.dp))
 

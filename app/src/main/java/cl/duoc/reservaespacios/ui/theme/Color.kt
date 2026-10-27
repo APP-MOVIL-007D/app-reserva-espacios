@@ -13,3 +13,6 @@ val TarjetaClara = Color(0xFFFFFFFF)
 //oscuro
 val FondoOscuro = Color(0xFF121110)
 val TextoOscuro = Color(0xFFF2F2F2)
+
+// Rojo
+val Rojo = Color(0xFFD32F2F)
