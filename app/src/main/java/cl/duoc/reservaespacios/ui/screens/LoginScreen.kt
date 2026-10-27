@@ -2,6 +2,7 @@ package cl.duoc.reservaespacios.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.R
@@ -57,6 +59,7 @@ fun LoginScreen(
     Column(
         modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp)
             .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +83,7 @@ fun LoginScreen(
         Text(
             text = "Reserva de espacios", style = MaterialTheme.typography.headlineMedium
         )
-        Text(text = "Sede Viña del Mar")
+        Text(text = "Sede Viña del Mar", color = MaterialTheme.colorScheme.onSurfaceVariant)
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -145,12 +148,12 @@ fun LoginScreen(
             },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Ingresar")
+            Text("INGRESAR")
         }
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = { mostrarRecuperar = true }) {
-            Text("¿Olvidaste tu contraseña?")
+            Text("¿Olvidaste tu contraseña?", textDecoration = TextDecoration.Underline)
         }
 
         Spacer(modifier = Modifier.weight(1f))
