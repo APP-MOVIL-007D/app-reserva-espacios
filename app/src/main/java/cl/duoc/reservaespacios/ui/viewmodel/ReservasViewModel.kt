@@ -23,6 +23,7 @@ import cl.duoc.reservaespacios.model.Espacio
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.model.Usuario
 import cl.duoc.reservaespacios.utils.fechaDesdeHoy
+import cl.duoc.reservaespacios.utils.horaActual
 import cl.duoc.reservaespacios.utils.numeroFecha
 import cl.duoc.reservaespacios.utils.numeroHora
 import kotlinx.coroutines.launch
@@ -91,6 +92,7 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
 
     fun cerrarSesion() {
         correoUsuario = ""
+        pestanaActual = "Inicio"
         sesionRepository.cerrar()
     }
 
@@ -170,6 +172,13 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
             "Tu reserva para ${reserva.espacio} el ${reserva.fecha} ha sido rechazada."
         )
     }
+
+    fun registrarIngreso(reserva: Reserva) = actualizar(reserva.copy(estado = "En uso",
+        horaIngreso = horaActual())
+    )
+
+    fun registrarSalida(reserva : Reserva) = actualizar(reserva.copy(estado = "Finalizada"))
+
 
     fun agregarReserva(
         espacio: String,
