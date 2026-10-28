@@ -4,7 +4,7 @@ App Android para reservar salas, laboratorios y otros espacios de la sede. Está
 
 Ahora las reservas se piden por un formulario de Notion, se anotan en Teamup y el resto se coordina por WhatsApp. Con la app la idea es tener todo en un solo lugar.
 
-Proyecto de DSY1105 Desarrollo de Aplicaciones Móviles, sección 007D (Evaluación Parcial 2).
+Proyecto de DSY1105 Desarrollo de Aplicaciones Móviles, sección 007D (Evaluaciones Parciales 2 y 3).
 
 ## Integrantes
 
@@ -16,29 +16,36 @@ Proyecto de DSY1105 Desarrollo de Aplicaciones Móviles, sección 007D (Evaluaci
 ## Qué hace la app
 
 - **Login** solo con correo institucional (`@duoc.cl` o `@profesor.duoc.cl`) y solo para usuarios registrados. Los correos de alumnos (`@duocuc.cl`) no entran.
-- Cada campo del login muestra su error con un ícono. La contraseña se pone roja o verde según el largo y dice cuántos caracteres faltan. "¿Olvidaste tu contraseña?" explica a quién contactar.
+- Cada campo del login muestra su error con un ícono. Si el usuario no está registrado o la contraseña no corresponde, lo dice. "¿Olvidaste tu contraseña?" explica a quién contactar.
+- La **sesión queda guardada**: si no cerraste sesión, la app parte directo en el inicio.
 - **Tres perfiles:** docente, administrativo y administrador. El administrador ve arriba la franja "VISTA ADMINISTRADOR".
-- Barra inferior con Inicio, Mis reservas, Espacios, Notificaciones y Menú.
-- **Inicio:** saludo con el nombre, las iniciales y el rol del usuario, botón a notificaciones y la próxima reserva aprobada con su fecha.
-- **Espacios:** lista de salas con buscador. Cada sala abre su **calendario**, con los bloques del día disponibles, pendientes o reservados.
-- **Solicitar reserva:** al tocar un bloque libre del calendario, se abre con el espacio, la fecha y la hora ya puestos. La reserva queda Pendiente y aparece en Mis reservas.
-- **Mis reservas:** separa Pendientes, Aprobadas e Historial. Se puede cancelar una reserva y antes pide confirmar.
-- **Perfil (Menú):** foto de perfil con la **cámara** o desde la **galería**, con animación al aparecer. Cerrar sesión pide confirmación.
-- Las reservas quedan guardadas en el teléfono (DataStore), no se pierden al cerrar la app.
+- Barra inferior con Inicio, Mis reservas, Espacios, Notificaciones y Menú, con una rayita amarilla bajo la pestaña seleccionada.
+- **Inicio:** saludo con el nombre, la foto de perfil (o las iniciales si no tiene) y el rol del usuario, botón a notificaciones, la próxima reserva aprobada con su fecha y los espacios disponibles hoy.
+- **Espacios:** lista de salas con buscador. Cada sala abre su **calendario**, con los bloques del día disponibles, pendientes o reservados. Se puede cambiar de día y de mes.
+- **Solicitar reserva:** al tocar un bloque libre del calendario, se abre con el espacio, la fecha y la hora ya puestos. Se elige la hora de término y el motivo. La reserva queda Pendiente y aparece en Mis reservas.
+- **Mis reservas:** separa Pendientes, Aprobadas e Historial. Se puede cancelar una reserva y antes pide confirmar. El día de la reserva aprobada aparece **Registrar ingreso** (queda En uso con la hora) y después **Registrar salida** (queda Finalizada).
+- **Notificaciones:** avisa cuando una reserva fue aprobada o rechazada, en la app y en el teléfono.
+- **Perfil (Menú):** foto de perfil con la **cámara** o desde la **galería**, se guarda y se ve también en el inicio. Cerrar sesión pide confirmación.
+- **Administrador:** su inicio son las solicitudes pendientes, con cuántas hay en lista de espera para el mismo bloque, y botones para aprobar o rechazar. Puede agregar un **nuevo espacio** con validaciones y foto, y **cargar el horario** eligiendo un archivo CSV.
+- Todo queda guardado en el teléfono con **SQLite (Room)**: reservas, espacios y usuarios. No se pierde al cerrar la app.
 - Tema claro y oscuro con los colores del manual de marca de la sede (amarillo Pantone 1235 C y negro).
 
 ## Cómo está organizado
 
-Usamos MVVM:
+Usamos MVVM con repositorios:
 
-- `model/Reserva.kt`: los datos de una reserva y las reservas de prueba.
-- `model/Usuario.kt`: los usuarios de prueba con su rol.
-- `ui/viewmodel/ReservasViewModel.kt`: la lista de reservas, el usuario que inició sesión y las funciones para agregar, cancelar, aprobar y rechazar. Cada cambio se guarda en DataStore.
-- `ui/viewmodel/MenuViewModel.kt`: el estado del perfil y el aviso de cerrar sesión.
+- `model/`: `Reserva`, `Espacio` y `Usuario`, que son las tablas de Room, con sus datos de prueba.
+- `data/room/`: `AppDatabase` y los DAO de cada tabla.
+- `data/repository/`: un repository por tabla, entre el viewmodel y el DAO. `SesionRepository` guarda el usuario conectado con SharedPreferences.
+- `ui/viewmodel/ReservasViewModel.kt`: las reservas, los espacios y el usuario que inició sesión, con las funciones para agregar, cancelar, aprobar, rechazar y registrar ingreso y salida.
+- `ui/viewmodel/LoginViewModel.kt`: el estado del login con StateFlow y sus validaciones.
+- `ui/viewmodel/MenuViewModel.kt`: la foto de perfil y el aviso de cerrar sesión.
+- `ui/viewmodel/`: también los de calendario, solicitar reserva y cargar horario.
 - `ui/screens/`: las pantallas en Compose.
-- `ui/componentes/`: piezas reutilizables, `CampoPassword` (el campo de contraseña) y `BarraAdmin` (la franja del administrador).
-- `data/DataStoreManager.kt`: guarda y lee las reservas como JSON con Gson.
+- `ui/componentes/`: piezas reutilizables, `CampoPassword` (el campo de contraseña), `BarraAdmin` (la franja del administrador) y `CuadroFecha` (el cuadrito con el día y el mes).
+- `utils/Fechas.kt`: fechas a partir de hoy, bloques horarios y textos como "Hoy" o "Mañana".
 - `utils/Validaciones.kt`: validaciones del login, separadas de la pantalla.
+- `utils/Imagenes.kt`: lee las fotos de la galería.
 - `navigation/Navigation.kt`: las rutas de la app, algunas con argumentos (espacio, fecha y hora).
 
 ## Cómo ejecutarla
@@ -50,7 +57,7 @@ Usamos MVVM:
 2. Abrirlo en Android Studio y esperar que sincronice Gradle.
 3. Usar un emulador o teléfono con Android 7.0 (API 24) o más.
 4. Darle a Run.
-5. Entrar con uno de los usuarios de prueba y una contraseña de 6 caracteres o más:
+5. Entrar con uno de los usuarios de prueba. La contraseña de cada uno está en `model/Usuario.kt`:
 
 | Correo | Perfil |
 |---|---|
@@ -58,7 +65,7 @@ Usamos MVVM:
 | `agajardo@duoc.cl` | Administrativo |
 | `fra.olmos@duoc.cl` | Administrador |
 
-La app viene con 10 reservas de prueba. Para volver a ellas hay que borrar los datos de la app en el teléfono.
+La app viene con 11 usuarios, 15 espacios y 11 reservas de prueba. Las fechas de las reservas se calculan desde el día de hoy, y Nancy tiene una aprobada para hoy para probar registrar ingreso. Para volver a los datos de prueba hay que borrar los datos de la app en el teléfono.
 
 ## Documentos
 
