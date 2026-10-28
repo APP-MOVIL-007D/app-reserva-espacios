@@ -1,5 +1,6 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,18 +27,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
+import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
 fun InicioScreen(
     reservasViewModel: ReservasViewModel,
+    menuViewModel: MenuViewModel,
     modifier: Modifier = Modifier,
     onVerEspacio: (String) -> Unit = {}
 ) {
@@ -48,6 +54,14 @@ fun InicioScreen(
     val styleTitleMedium = MaterialTheme.typography.titleMedium
 
     val nombre = reservasViewModel.nombreUsuario
+
+    LaunchedEffect(reservasViewModel.usuarioActual?.foto){
+        val fotoGuardada = reservasViewModel.usuarioActual?.foto
+        if(!fotoGuardada.isNullOrEmpty() && menuViewModel.fotoBitmap == null){
+            val imagen = menuViewModel.deTextoImagen(fotoGuardada)
+            if(imagen!=null) menuViewModel.actualizarFoto(imagen)
+        }
+    }
 
     //espacios disponoibles q vienen de room
     val disponibles = reservasViewModel.espacios.filter { it.estado == "Disponible" }.take(3)
@@ -76,11 +90,22 @@ fun InicioScreen(
                     modifier = Modifier.size(56.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            reservasViewModel.inicialesUsuario,
-                            style = styleTitleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
+                        val foto = menuViewModel.fotoBitmap
+                        if(foto!=null){
+                            Image(
+                                bitmap = foto.asImageBitmap(),
+                                contentDescription = "Foto de perfil",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }else{
+                            Text(
+                                reservasViewModel.inicialesUsuario,
+                                style = styleTitleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
                     }
                 }
 

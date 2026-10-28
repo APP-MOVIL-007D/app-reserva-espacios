@@ -57,6 +57,8 @@ val pestanas = listOf(
 @Composable
 fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavController) {
 
+    val menuViewModel: MenuViewModel = viewModel()
+
     Scaffold(
         topBar = {
             if (reservasViewModel.esAdmin) {
@@ -104,6 +106,7 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
             } else {
                 InicioScreen(
                     reservasViewModel,
+                    menuViewModel,
                     Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
                     onVerEspacio = { nombre -> navController.navigate("calendarioEspacio/$nombre") }
                 )
@@ -116,7 +119,6 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
             )
             "Notificaciones" -> NotificacionScreen(reservasViewModel, modifier)
             "Menu" -> Box(modifier) {
-                val menuViewModel: MenuViewModel = viewModel()
                 MenuScreen(
                     menuViewModel = menuViewModel,
                     reservasViewModel = reservasViewModel,
