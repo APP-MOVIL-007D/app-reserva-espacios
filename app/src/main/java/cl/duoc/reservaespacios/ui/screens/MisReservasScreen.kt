@@ -163,9 +163,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                                     Column {
                                         Text(
                                             reserva.espacio,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            textDecoration =
-                                                if (reserva.estado == "Cancelada") TextDecoration.LineThrough else null
+                                            style = MaterialTheme.typography.titleMedium
                                         )
                                         Text(
                                             reserva.horario,
