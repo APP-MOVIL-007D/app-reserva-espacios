@@ -36,6 +36,5 @@ fun CuadroFecha(fecha: String, modifier : Modifier = Modifier){
             Text(mes, style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSecondary)
         }
-
     }
 }

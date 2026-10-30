@@ -15,7 +15,7 @@ import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
 @Composable
 fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasViewModel) {
-    //se calcula a cada rato la sesióin deneuevo , cada vez q se cambia el correo,
+    //se calcula la sesión denuevo ,cada vez q se cambia el correo
     val inicio =
         remember { if (reservasViewModel.correoUsuario.isNotEmpty()) "principal" else "login" }
 
@@ -72,7 +72,6 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
                 espacioNombre = espacioSeleccionado
             )
         }
-
         composable("nuevoEspacio") {
             AdminNuevoEspacioScreen(
                 reservasViewModel = reservasViewModel,
@@ -82,7 +81,5 @@ fun AppNavigation(navController: NavHostController, reservasViewModel: ReservasV
         composable("cargarHorario") {
             CargarHorarioScreen ( onVolver = { navController.popBackStack() } )
         }
-
     }
-
 }

@@ -49,10 +49,8 @@ fun InicioScreen(
 ) {
     // para el recuerdo, me demore 3 horas en reescribir el inicioscreen gracias ctrl+alt+l por existir
     val proxima = reservasViewModel.proximaReserva
-
     val styleTitleLarge = MaterialTheme.typography.titleLarge
     val styleTitleMedium = MaterialTheme.typography.titleMedium
-
     val nombre = reservasViewModel.nombreUsuario
 
     LaunchedEffect(reservasViewModel.usuarioActual?.foto){
@@ -105,10 +103,8 @@ fun InicioScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         }
-
                     }
                 }
-
 
                 Spacer(modifier = Modifier.width(12.dp))
 
@@ -160,12 +156,11 @@ fun InicioScreen(
                 ) {
                     Text("TU PRÓXIMA RESERVA", style = MaterialTheme.typography.labelMedium)
                     if (proxima != null) {
-                        Spacer(modifier = Modifier.height(8.dp))
 
+                        Spacer(modifier = Modifier.height(8.dp))
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             CuadroFecha(proxima.fecha)
-
 
                             Spacer(modifier = Modifier.width(12.dp))
 
@@ -186,7 +181,6 @@ fun InicioScreen(
                                 )
                             }
                         }
-
                     } else {
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
@@ -195,7 +189,6 @@ fun InicioScreen(
                         )
                     }
                 }
-
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -239,6 +232,7 @@ fun InicioScreen(
                                     RoundedCornerShape(8.dp)
                                 )
                         )
+
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Column(modifier = Modifier.weight(1f)) {

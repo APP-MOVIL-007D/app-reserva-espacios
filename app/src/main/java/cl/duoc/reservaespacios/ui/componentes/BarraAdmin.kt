@@ -25,7 +25,7 @@ fun BarraAdmin() {
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.5.sp,
         textAlign = TextAlign.Center,
-        //vdd q el orden del modifier si importa
+        //orden del modifier si importa
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()

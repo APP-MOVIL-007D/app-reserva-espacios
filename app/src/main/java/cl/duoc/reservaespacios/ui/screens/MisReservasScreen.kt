@@ -200,7 +200,6 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                                     ) {
                                         Text("REGISTRAR SALIDA")
                                     }
-
                                 }
 
                                 if(reserva.estado == "Pendiente" || reserva.estado == "Aprobada"){
@@ -243,6 +242,4 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
             }
         )
     }
-
-
 }

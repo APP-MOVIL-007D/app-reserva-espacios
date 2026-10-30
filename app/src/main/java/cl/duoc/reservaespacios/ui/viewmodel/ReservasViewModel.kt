@@ -29,6 +29,7 @@ import cl.duoc.reservaespacios.utils.numeroHora
 import kotlinx.coroutines.launch
 
 class ReservasViewModel(application: Application) : AndroidViewModel(application) {
+
     val reservas = mutableStateListOf<Reserva>()
 
     private val db = AppDatabase.getInstance(application)
@@ -65,6 +66,7 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     }
 
     val misReservas : List<Reserva> get() = reservas.filter { it.correoUsuario.equals(correoUsuario, ignoreCase = true) }
+
     val inicialesUsuario: String
         get() {
             val usuario = usuarioActual
@@ -77,6 +79,7 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         }
 
     val rolUsuario: String get() = usuarioActual?.rol ?: ""
+
     val esAdmin: Boolean get() = rolUsuario == "Administrador"
 
     fun iniciarSesion(correo: String) {
@@ -106,12 +109,10 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     }
 
     init {
-
         viewModelScope.launch {
             reservas.addAll(reservaRepository.cargarReservas())
             espacios.addAll(espacioRepository.cargarEspacios())
             usuarios.addAll(usuarioRepository.cargarUsuarios())
-
         }
     }
 
@@ -173,7 +174,6 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
 
     fun registrarSalida(reserva : Reserva) = actualizar(reserva.copy(estado = "Finalizada"))
 
-
     fun agregarReserva(
         espacio: String,
         fecha: String,
@@ -192,7 +192,6 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         )
         reservas.add(nueva)
         viewModelScope.launch { reservaRepository.agregar(nueva) }
-
     }
 
     fun usuarioPorCorreo(correo: String): Usuario? =

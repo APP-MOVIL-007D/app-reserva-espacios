@@ -50,7 +50,6 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = viewModel()
 ) {
-
     val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     var mostrarRecuperar by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -75,7 +74,6 @@ fun LoginScreen(
             contentDescription = "Logo Duoc Uc Sede Viña del Mar",
             modifier = Modifier.width(240.dp)
         )
-
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -109,7 +107,6 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
@@ -126,6 +123,7 @@ fun LoginScreen(
         ) {
             Text("INGRESAR")
         }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = { mostrarRecuperar = true }) {
@@ -133,6 +131,7 @@ fun LoginScreen(
         }
 
         Spacer(modifier = Modifier.weight(1f))
+
         Text(
             "Acceso con tu cuenta institucional Duoc UC",
             style = MaterialTheme.typography.bodySmall,
@@ -157,7 +156,6 @@ fun LoginScreen(
                     Text("Entendido")
                 }
             }
-
         )
     }
 }

@@ -66,9 +66,7 @@ fun CampoPassword(
                         if (visible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                         contentDescription = if (visible) "Ocultar contraseña" else "Mostrar contraseña"
                     )
-
                 }
-
             }
         },
         supportingText = {

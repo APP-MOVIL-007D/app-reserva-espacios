@@ -38,14 +38,12 @@ import cl.duoc.reservaespacios.ui.componentes.BarraAdmin
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
-//data class de pestaña
 data class Pestana(
     val nombre: String,
     val iconoFull: ImageVector,
     val iconoVacio: ImageVector
 )
 
-//Para no tener q escribirlo 5 vececs DRY
 val pestanas = listOf(
     Pestana("Inicio", Icons.Filled.Home, Icons.Outlined.Home),
     Pestana("Calendario", Icons.Filled.DateRange, Icons.Outlined.DateRange),
@@ -117,7 +115,9 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
                 if (reservasViewModel.esAdmin) modifier.consumeWindowInsets(innerPadding)
                 else Modifier.padding(bottom = innerPadding.calculateBottomPadding())
             )
+
             "Notificaciones" -> NotificacionScreen(reservasViewModel, modifier)
+
             "Menu" -> Box(modifier) {
                 MenuScreen(
                     menuViewModel = menuViewModel,
@@ -137,7 +137,5 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
             "Espacios" -> EspacioScreen(navController, reservasViewModel, modifier)
 
         }
-
-
     }
 }
