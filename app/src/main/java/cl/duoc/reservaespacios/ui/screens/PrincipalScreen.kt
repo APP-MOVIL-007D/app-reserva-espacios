@@ -1,5 +1,6 @@
 package cl.duoc.reservaespacios.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,6 +57,11 @@ val pestanas = listOf(
 fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavController) {
 
     val menuViewModel: MenuViewModel = viewModel()
+
+    //para q no se cierre la app cuando le doy al boton de atrás
+    BackHandler(enabled = reservasViewModel.pestanaActual != "Inicio") {
+        reservasViewModel.pestanaActual = "Inicio"
+    }
 
     Scaffold(
         topBar = {

@@ -61,7 +61,6 @@ fun InicioScreen(
         }
     }
 
-    //espacios disponoibles q vienen de room
     val disponibles = reservasViewModel.espaciosDisponiblesHoy.take(3)
 
     Box(modifier.fillMaxSize()) {
