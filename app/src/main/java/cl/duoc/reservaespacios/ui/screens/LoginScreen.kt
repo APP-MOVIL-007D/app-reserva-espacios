@@ -44,6 +44,7 @@ import cl.duoc.reservaespacios.R
 import cl.duoc.reservaespacios.ui.componentes.CampoPassword
 import cl.duoc.reservaespacios.ui.viewmodel.LoginViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
+import cl.duoc.reservaespacios.utils.saludoSegunHora
 
 @Composable
 fun LoginScreen(
@@ -117,7 +118,7 @@ fun LoginScreen(
             onClick = {
                 loginViewModel.ingresar { correoLimpio ->
                     reservasViewModel.iniciarSesion(correoLimpio)
-                    Toast.makeText(context, "Bienvenido/a ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "${saludoSegunHora()}, ${reservasViewModel.nombreUsuario}", Toast.LENGTH_SHORT).show()
                     navController.navigate("principal") {
                         popUpTo("login") { inclusive = true }
                     }

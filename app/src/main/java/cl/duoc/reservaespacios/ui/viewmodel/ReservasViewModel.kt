@@ -122,7 +122,6 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    //esto tiene un problema con el -1
     private fun actualizar(reservaCambiada: Reserva) {
         val index = reservas.indexOfFirst { it.id == reservaCambiada.id }
         if (index == -1) return

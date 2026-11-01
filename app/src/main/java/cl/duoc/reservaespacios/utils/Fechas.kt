@@ -71,3 +71,15 @@ fun horaStringAMinutos(hora: String): Int {
     }
     return 0
 }
+
+//función para saludar según la hora y quitar lo del Bienveinido/a ${nombre}
+fun saludoSegunHora(): String{
+    val hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    return when (hora){
+        in 5..11 -> "Buenos días"
+        in 12..19 -> "Buenas tardes"
+        else -> "Buenas noches"
+    }
+}
+
+
