@@ -65,6 +65,12 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
         }.minByOrNull { numeroFecha(it.fecha).toLong() * 10000 + numeroHora(it.horario) }
     }
 
+    val espaciosDisponiblesHoy : List<Espacio> get() {
+        val hoy = fechaDesdeHoy(0)
+        val ocupados = reservas.filter{ it.fecha == hoy && it.estado in listOf("Aprobada", "En uso")}.map { it.espacio }
+        return espacios.filter {it.estado == "Disponible" && it.nombre !in ocupados}
+    }
+
     val misReservas : List<Reserva> get() = reservas.filter { it.correoUsuario.equals(correoUsuario, ignoreCase = true) }
 
     val inicialesUsuario: String

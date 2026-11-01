@@ -47,7 +47,7 @@ fun InicioScreen(
     modifier: Modifier = Modifier,
     onVerEspacio: (String) -> Unit = {}
 ) {
-    // para el recuerdo, me demore 3 horas en reescribir el inicioscreen gracias ctrl+alt+l por existir
+    // para el recuerdo, me demore 3 horas en reescribir el inicioscreen
     val proxima = reservasViewModel.proximaReserva
     val styleTitleLarge = MaterialTheme.typography.titleLarge
     val styleTitleMedium = MaterialTheme.typography.titleMedium
@@ -62,7 +62,7 @@ fun InicioScreen(
     }
 
     //espacios disponoibles q vienen de room
-    val disponibles = reservasViewModel.espacios.filter { it.estado == "Disponible" }.take(3)
+    val disponibles = reservasViewModel.espaciosDisponiblesHoy.take(3)
 
     Box(modifier.fillMaxSize()) {
         //Este es el encabezado amarillo q hay en elmockup
