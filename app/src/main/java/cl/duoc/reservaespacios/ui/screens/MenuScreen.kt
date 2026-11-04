@@ -12,6 +12,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,16 +25,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.AddToPhotos
+import androidx.compose.material.icons.filled.AppRegistration
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.BorderColor
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.NightlightRound
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Unarchive
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -46,9 +59,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cl.duoc.reservaespacios.ui.theme.Rojo
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
@@ -59,18 +74,28 @@ fun MenuScreen(
     menuViewModel: MenuViewModel,
     reservasViewModel: ReservasViewModel,
     modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.surface,
     //lambda
     onCerrarSesion: () -> Unit,
     onIrASolicitudes: () -> Unit,
     onIrACargarHorario: () -> Unit,
-    onIrANuevoEspacio: () -> Unit
+    onIrANuevoEspacio: () -> Unit,
+    onIrAMisReservas: () -> Unit,
+    onIrANotificaciones: () -> Unit
 ) {
     val styleTitleLarge = MaterialTheme.typography.titleLarge
     val styleTitleMedium = MaterialTheme.typography.titleMedium
 
     val nombre = reservasViewModel.nombreUsuario
+    val correo = reservasViewModel.correoUsuario
+    val rol = reservasViewModel.rolUsuario
 
     val context = LocalContext.current
+
+    var rojo = Rojo
+    var gris = Color(0xFF949891)
+
+    var modoOscuro by remember { mutableStateOf(false) }
 
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -123,23 +148,19 @@ fun MenuScreen(
     // Estructura del menu
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.width(8.dp))
+        Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Mi Perfil",
+                "Menu",
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         // Foto de Perfil con animación
         AnimatedVisibility (
@@ -178,62 +199,93 @@ fun MenuScreen(
             text = nombre,
             style = styleTitleMedium
         )
-
-        TextButton (
-            onClick = { menuViewModel.pedirCerrarSesion() }
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                tint = Rojo,
-                contentDescription = "CerrarSesion"
-            )
-            Text(
-                text = "Cerrar Sesión",
-                style = styleTitleMedium,
-                color = Rojo
-            )
-        }
+        Text(
+            text = "$rol: $correo",
+            color = gris
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        //Botones Admin
-        if (reservasViewModel.esAdmin) {
-            Card (
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Button (
-                        onClick = onIrASolicitudes,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Solicitudes")
-                    }
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            //Secciones Botones
+            if (reservasViewModel.esAdmin) {
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Encabezado("ADMINISTRACIÓN")
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    BloqueBoton(
+                        icon = Icons.Default.AppRegistration,
+                        title = "Solicitudes",
+                        onClick = onIrASolicitudes
+                    )
 
-                    Button(
-                        onClick = onIrACargarHorario,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Cargar Horario")
-                    }
+                    BloqueBoton(
+                        icon = Icons.Default.Unarchive,
+                        title = "Cargar Horario",
+                        onClick = onIrACargarHorario
+                    )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(
-                        onClick = onIrANuevoEspacio,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Nuevo Espacio")
-                    }
+                    BloqueBoton(
+                        icon = Icons.Default.BorderColor,
+                        title = "Nuevo Espacio",
+                        onClick = onIrANuevoEspacio
+                    )
                 }
+
+            } else {
+                Encabezado("MI CUENTA")
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    BloqueBoton(
+                        icon = Icons.Default.DateRange,
+                        title = "Mis reservas",
+                        onClick = onIrAMisReservas
+                    )
+                    BloqueBoton(
+                        icon = Icons.Default.Notifications,
+                        title = "Notificaciones",
+                        onClick = onIrANotificaciones
+                    )
+                }
+
+            }
+            Encabezado("CONFIGURACIÓN")
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.fillMaxWidth()
+            ){
+                BloqueBoton(
+                    icon = Icons.Default.NightlightRound,
+                    title = "Modo oscuro",
+                    onClick = { modoOscuro = !modoOscuro },
+                    trailing = {
+                        Switch(
+                            checked = modoOscuro,
+                            onCheckedChange = { modoOscuro = it }
+                        )
+                    }
+                )
+                BloqueBoton(
+                    icon = Icons.AutoMirrored.Filled.ExitToApp,
+                    title = "Cerrar Sesión",
+                    textColor = rojo,
+                    iconColor = rojo,
+                    onClick = { menuViewModel.pedirCerrarSesion()  }
+                )
             }
         }
+
+
     }
 
     // Toast
@@ -302,4 +354,58 @@ fun ToastFoto(
             }
         }
     )
+}
+
+@Composable
+fun Encabezado(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.labelSmall,
+        color = Color.Gray,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, bottom = 8.dp)
+    )
+}
+
+
+@Composable
+fun BloqueBoton(
+    icon: ImageVector,
+    title: String,
+    textColor: Color = MaterialTheme.colorScheme.onSurface,
+    iconColor: Color = Color.DarkGray,
+    onClick: () -> Unit,
+    trailing: @Composable () -> Unit = {
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowRight,
+            contentDescription = null,
+            tint = Color.LightGray
+        )
+    }
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 14.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            tint = iconColor,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = title,
+            color = textColor,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f)
+        )
+        trailing()
+    }
 }

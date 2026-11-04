@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cl.duoc.reservaespacios.ui.componentes.BarraAdmin
+import cl.duoc.reservaespacios.ui.viewmodel.CargarHorarioViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
@@ -136,7 +137,9 @@ fun PrincipalScreen(reservasViewModel: ReservasViewModel, navController: NavCont
                     },
                     onIrASolicitudes = { reservasViewModel.pestanaActual = "Inicio" },
                     onIrACargarHorario = { navController.navigate("cargarHorario") },
-                    onIrANuevoEspacio = { navController.navigate("nuevoEspacio") }
+                    onIrANuevoEspacio = { navController.navigate("nuevoEspacio") },
+                    onIrAMisReservas = { reservasViewModel.pestanaActual = "Calendario" },
+                    onIrANotificaciones = { reservasViewModel.pestanaActual = "Notificaciones" }
                 )
             }
 
