@@ -16,4 +16,9 @@ class SesionRepository (context: Context){
         prefs.edit { remove("correo")}
     }
 
+    fun obtenerModoOscuro(): Boolean = prefs.getBoolean("modo_oscuro", false)
+
+    fun guardarModoOscuro(esOscuro: Boolean) {
+        prefs.edit { putBoolean("modo_oscuro", esOscuro) }
+    }
 }

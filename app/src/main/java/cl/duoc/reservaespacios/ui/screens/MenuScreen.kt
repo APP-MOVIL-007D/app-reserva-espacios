@@ -95,7 +95,6 @@ fun MenuScreen(
     var rojo = Rojo
     var gris = Color(0xFF949891)
 
-    var modoOscuro by remember { mutableStateOf(false) }
 
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -267,11 +266,11 @@ fun MenuScreen(
                 BloqueBoton(
                     icon = Icons.Default.NightlightRound,
                     title = "Modo oscuro",
-                    onClick = { modoOscuro = !modoOscuro },
+                    onClick = { reservasViewModel.cambiarModoOscuro(!reservasViewModel.modoOscuro) },
                     trailing = {
                         Switch(
-                            checked = modoOscuro,
-                            onCheckedChange = { modoOscuro = it }
+                            checked = reservasViewModel.modoOscuro,
+                            onCheckedChange = { reservasViewModel.cambiarModoOscuro(it) }
                         )
                     }
                 )

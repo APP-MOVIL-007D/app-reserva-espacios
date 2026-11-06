@@ -19,17 +19,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ReservaEspaciosTheme {
-                MyApp()
+            val reservasViewModel: ReservasViewModel = viewModel()
+            ReservaEspaciosTheme(darkTheme = reservasViewModel.modoOscuro) {
+                MyApp(reservasViewModel)
             }
         }
     }
 }
 
 @Composable
-fun MyApp() {
+fun MyApp(reservasViewModel: ReservasViewModel) {
     val navController = rememberNavController()
-    val reservasViewModel: ReservasViewModel = viewModel()
     Surface(modifier = Modifier.fillMaxSize()) {
         AppNavigation(navController, reservasViewModel)
 

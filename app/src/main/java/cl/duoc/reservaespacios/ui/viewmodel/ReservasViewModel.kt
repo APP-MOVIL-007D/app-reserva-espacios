@@ -41,6 +41,14 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     var correoUsuario by mutableStateOf(sesionRepository.obtenerCorreo())
         private set
 
+    var modoOscuro by mutableStateOf(sesionRepository.obtenerModoOscuro())
+        private set
+
+    fun cambiarModoOscuro(esOscuro: Boolean) {
+        modoOscuro = esOscuro
+        sesionRepository.guardarModoOscuro(esOscuro)
+    }
+
     val usuarios = mutableStateListOf<Usuario>()
 
     val espacios = mutableStateListOf<Espacio>()
