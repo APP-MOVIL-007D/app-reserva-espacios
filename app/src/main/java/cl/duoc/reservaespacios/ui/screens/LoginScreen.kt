@@ -46,6 +46,7 @@ import cl.duoc.reservaespacios.ui.viewmodel.LoginViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.utils.saludoSegunHora
 
+//todo uistate iría acá
 @Composable
 fun LoginScreen(
     reservasViewModel: ReservasViewModel,

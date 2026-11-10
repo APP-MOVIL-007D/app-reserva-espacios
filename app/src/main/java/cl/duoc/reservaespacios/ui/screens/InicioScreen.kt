@@ -40,6 +40,7 @@ import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
+//todo uistate iría acá
 @Composable
 fun InicioScreen(
     reservasViewModel: ReservasViewModel,

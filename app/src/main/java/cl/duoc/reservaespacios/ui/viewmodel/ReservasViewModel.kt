@@ -261,6 +261,4 @@ data class Notificacion(
     val mensaje: String,
     val fecha: String,
     val leida: Boolean
-){
-
-}
+)
