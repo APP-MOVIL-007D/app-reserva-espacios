@@ -26,7 +26,6 @@ import cl.duoc.reservaespacios.utils.fechaDesdeHoy
 import cl.duoc.reservaespacios.utils.horaActual
 import cl.duoc.reservaespacios.utils.numeroFecha
 import cl.duoc.reservaespacios.utils.numeroHora
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -284,9 +283,6 @@ sealed interface CargaUiState{
     data object SinConexion : CargaUiState
     data class Error(val mensaje: String) : CargaUiState
 }
-
-
-
 
 // Estructura de Notificacion ocupada en notificacionesUsuario
 data class Notificacion(

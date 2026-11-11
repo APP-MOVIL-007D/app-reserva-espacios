@@ -22,12 +22,15 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,11 +39,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
+import cl.duoc.reservaespacios.ui.viewmodel.CargaUiState
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
-//todo uistate iría acá
 @Composable
 fun InicioScreen(
     reservasViewModel: ReservasViewModel,
@@ -50,6 +54,7 @@ fun InicioScreen(
 ) {
     // para el recuerdo, me demore 3 horas en reescribir el inicioscreen
     val proxima = reservasViewModel.proximaReserva
+    val carga by reservasViewModel.cargaUiState.collectAsStateWithLifecycle()
     val styleTitleLarge = MaterialTheme.typography.titleLarge
     val styleTitleMedium = MaterialTheme.typography.titleMedium
     val nombre = reservasViewModel.nombreUsuario
@@ -155,38 +160,57 @@ fun InicioScreen(
                         .padding(16.dp)
                 ) {
                     Text("TU PRÓXIMA RESERVA", style = MaterialTheme.typography.labelMedium)
-                    if (proxima != null) {
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            CuadroFecha(proxima.fecha)
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(proxima.espacio, style = styleTitleMedium)
-                                Text(
-                                    "${proxima.horario} · ${proxima.motivo}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-
-                            Surface(color = Color(0xFFD0E6C0), shape = RoundedCornerShape(50)) {
-                                Text(
-                                    "Aprobada",
-                                    color = Color(0xFF31570E),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                                )
-                            }
+                    when (val estado = carga) {
+                        is CargaUiState.Cargando -> {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            CircularProgressIndicator()
                         }
-                    } else {
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Text(
-                            "No tienes reservas aprobadas",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+
+                        is CargaUiState.SinConexion -> {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("No hay conexión a internet", color = MaterialTheme.colorScheme.error)
+                            TextButton(onClick = { reservasViewModel.cargarDatos() }) { Text("Reintentar") }
+                        }
+
+                        is CargaUiState.Error -> {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(estado.mensaje, color = MaterialTheme.colorScheme.error)
+                        }
+
+                        is CargaUiState.Listo ->
+                            if (proxima != null) {
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    CuadroFecha(proxima.fecha)
+
+                                    Spacer(modifier = Modifier.width(12.dp))
+
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(proxima.espacio, style = styleTitleMedium)
+                                        Text(
+                                            "${proxima.horario} · ${proxima.motivo}",
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+                                    }
+
+                                    Surface(color = Color(0xFFD0E6C0), shape = RoundedCornerShape(50)) {
+                                        Text(
+                                            "Aprobada",
+                                            color = Color(0xFF31570E),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                        )
+                                    }
+                                }
+                            } else {
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Text(
+                                    "No tienes reservas aprobadas",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                     }
                 }
             }

@@ -48,7 +48,6 @@ import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.utils.sumarMins
 import cl.duoc.reservaespacios.utils.textoDia
 
-//todo uistate iría acá
 @Composable
 fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier = Modifier) {
 
