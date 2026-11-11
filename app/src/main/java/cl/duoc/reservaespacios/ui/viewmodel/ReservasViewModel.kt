@@ -26,7 +26,12 @@ import cl.duoc.reservaespacios.utils.fechaDesdeHoy
 import cl.duoc.reservaespacios.utils.horaActual
 import cl.duoc.reservaespacios.utils.numeroFecha
 import cl.duoc.reservaespacios.utils.numeroHora
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class ReservasViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -54,6 +59,9 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     val espacios = mutableStateListOf<Espacio>()
 
     var pestanaActual by mutableStateOf("Inicio")
+
+    private val _cargaUiState = MutableStateFlow<CargaUiState>(CargaUiState.Cargando)
+    val cargaUiState : StateFlow<CargaUiState> = _cargaUiState.asStateFlow()
 
     val usuarioActual: Usuario?
         get() = usuarios.find {
@@ -123,10 +131,25 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
     }
 
     init {
+        cargarDatos()
+    }
+
+    fun cargarDatos(){
         viewModelScope.launch {
-            reservas.addAll(reservaRepository.cargarReservas())
-            espacios.addAll(espacioRepository.cargarEspacios())
-            usuarios.addAll(usuarioRepository.cargarUsuarios())
+            _cargaUiState.value = CargaUiState.Cargando
+            try{
+                reservas.clear()
+                reservas.addAll(reservaRepository.cargarReservas())
+                espacios.clear()
+                espacios.addAll(espacioRepository.cargarEspacios())
+                usuarios.clear()
+                usuarios.addAll(usuarioRepository.cargarUsuarios())
+                _cargaUiState.value = CargaUiState.Listo
+            } catch (_: IOException){
+                _cargaUiState.value = CargaUiState.SinConexion
+            } catch (_: Exception){
+                _cargaUiState.value = CargaUiState.Error("No se pudieron cargar los datos")
+            }
         }
     }
 
@@ -254,6 +277,16 @@ class ReservasViewModel(application: Application) : AndroidViewModel(application
             }
             .reversed()
 }
+
+sealed interface CargaUiState{
+    data object Cargando: CargaUiState
+    data object Listo: CargaUiState
+    data object SinConexion : CargaUiState
+    data class Error(val mensaje: String) : CargaUiState
+}
+
+
+
 
 // Estructura de Notificacion ocupada en notificacionesUsuario
 data class Notificacion(

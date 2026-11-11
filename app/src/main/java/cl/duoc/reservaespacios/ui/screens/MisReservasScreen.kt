@@ -18,6 +18,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
@@ -39,8 +40,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
+import cl.duoc.reservaespacios.ui.viewmodel.CargaUiState
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.utils.sumarMins
 import cl.duoc.reservaespacios.utils.textoDia
@@ -52,6 +55,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
     val pestanasReserva = listOf("Pendientes", "Aprobadas", "Historial")
     var pestanaActual by remember { mutableIntStateOf(0) }
     var reservaACancelar by remember { mutableStateOf<Reserva?>(null) }
+    val carga by reservasViewModel.cargaUiState.collectAsStateWithLifecycle()
 
     val estadosPestana = when (pestanaActual) {
         0 -> listOf("Pendiente")
@@ -78,7 +82,10 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
                     containerColor = MaterialTheme.colorScheme.surface,
                     indicator = {
                         TabRowDefaults.PrimaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(pestanaActual, matchContentSize = true),
+                            modifier = Modifier.tabIndicatorOffset(
+                                pestanaActual,
+                                matchContentSize = true
+                            ),
                             width = Dp.Unspecified,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -99,134 +106,161 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
         }
 
         Column(modifier = Modifier.padding(16.dp)) {
-            if (reservasFiltradas.isEmpty()) {
-                Text(
-                    "No tienes reservas en esta sección",
-                    style = MaterialTheme.typography.bodyMedium
+            when (val estado = carga) {
+                is CargaUiState.Cargando -> CircularProgressIndicator()
+                is CargaUiState.SinConexion -> Column {
+                    Text("No hay conexión a internet", color = MaterialTheme.colorScheme.error)
+                    TextButton(onClick = { reservasViewModel.cargarDatos() }) { Text("Reintentar") }
+                }
+
+                is CargaUiState.Error -> Text(
+                    estado.mensaje,
+                    color = MaterialTheme.colorScheme.error
                 )
-            } else {
-                LazyColumn {
-                    items(reservasFiltradas, key = { it.id }) { reserva ->
 
-                        val colorFondo = when (reserva.estado) {
-                            "Aprobada" -> Color(0xFFD0E6C0)
-                            "Rechazada" -> Color(0xFFF4C8BB)
-                            "Cancelada" -> Color(0xFF5F6368)
-                            "Finalizada" -> Color(0xFFD0E6C0)
-                            else -> Color(0xFFFFF1CC)
-                        }
+                is CargaUiState.Listo ->
+                    if (reservasFiltradas.isEmpty()) {
+                        Text(
+                            "No tienes reservas en esta sección",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    } else {
+                        LazyColumn {
+                            items(reservasFiltradas, key = { it.id }) { reserva ->
 
-                        val colorTexto = when (reserva.estado) {
-                            "Aprobada" -> Color(0xFF31570E)
-                            "Rechazada" -> Color(0xFF802F1A)
-                            "Cancelada" -> Color.White
-                            "Finalizada" -> Color(0xFF31570E)
-                            else -> Color(0xFF8A5A00)
-                        }
+                                val colorFondo = when (reserva.estado) {
+                                    "Aprobada" -> Color(0xFFD0E6C0)
+                                    "Rechazada" -> Color(0xFFF4C8BB)
+                                    "Cancelada" -> Color(0xFF5F6368)
+                                    "Finalizada" -> Color(0xFFD0E6C0)
+                                    else -> Color(0xFFFFF1CC)
+                                }
 
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 12.dp)
-                                .animateItem()
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                                val colorTexto = when (reserva.estado) {
+                                    "Aprobada" -> Color(0xFF31570E)
+                                    "Rechazada" -> Color(0xFF802F1A)
+                                    "Cancelada" -> Color.White
+                                    "Finalizada" -> Color(0xFF31570E)
+                                    else -> Color(0xFF8A5A00)
+                                }
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 12.dp)
+                                        .animateItem()
                                 ) {
-                                    Surface(color = colorFondo, shape = RoundedCornerShape(50)) {
-                                        Text(
-                                            reserva.estado,
-                                            color = colorTexto,
-                                            style = MaterialTheme.typography.labelMedium,
-                                            modifier = Modifier.padding(
-                                                horizontal = 10.dp,
-                                                vertical = 4.dp
+                                    Column(modifier = Modifier.padding(16.dp)) {
+
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Surface(
+                                                color = colorFondo,
+                                                shape = RoundedCornerShape(50)
+                                            ) {
+                                                Text(
+                                                    reserva.estado,
+                                                    color = colorTexto,
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    modifier = Modifier.padding(
+                                                        horizontal = 10.dp,
+                                                        vertical = 4.dp
+                                                    )
+                                                )
+                                            }
+                                            Text(
+                                                textoDia(reserva.fecha),
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
-                                        )
-                                    }
-                                    Text(
-                                        textoDia(reserva.fecha),
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(12.dp))
-
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    CuadroFecha(reserva.fecha)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Column {
-                                        Text(
-                                            reserva.espacio,
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                        Text(
-                                            reserva.horario,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Text(
-                                            if (reserva.estado == "En uso") "Ingreso registrado a las ${reserva.horaIngreso}" else
-                                                reserva.motivo,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
-
-                                val esHoy = textoDia(reserva.fecha) == "Hoy"
-
-                                if (reserva.estado == "Aprobada" && esHoy) {
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Button(onClick = {
-                                        reservasViewModel.registrarIngreso(reserva)
-                                    }, modifier = Modifier.fillMaxWidth()) {
-                                        Text("REGISTRAR INGRESO")
-                                    }
-                                }
-
-                                if (reserva.estado == "En uso") {
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    OutlinedButton(
-                                        onClick = {
-                                            reservasViewModel.registrarSalida(reserva)
-                                        },
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Text("REGISTRAR SALIDA")
-                                    }
-                                }
-
-                                if(reserva.estado == "Pendiente" || reserva.estado == "Aprobada"){
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Row(modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment =  Alignment.CenterVertically){
-                                        if(reserva.estado == "Aprobada" && esHoy){
-                                            Text("Disponible hasta las ${sumarMins(reserva.horario.take(5), 10)}",
-                                                style =MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant)
                                         }
-                                        Spacer(modifier = Modifier.weight(1f))
-                                        Text("Cancelar",
-                                            color= MaterialTheme.colorScheme.error, textDecoration = TextDecoration.Underline,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            modifier = Modifier.clickable{ reservaACancelar = reserva})
+
+                                        Spacer(modifier = Modifier.height(12.dp))
+
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            CuadroFecha(reserva.fecha)
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Column {
+                                                Text(
+                                                    reserva.espacio,
+                                                    style = MaterialTheme.typography.titleMedium
+                                                )
+                                                Text(
+                                                    reserva.horario,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    if (reserva.estado == "En uso") "Ingreso registrado a las ${reserva.horaIngreso}" else
+                                                        reserva.motivo,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        val esHoy = textoDia(reserva.fecha) == "Hoy"
+
+                                        if (reserva.estado == "Aprobada" && esHoy) {
+                                            Spacer(modifier = Modifier.height(12.dp))
+                                            Button(onClick = {
+                                                reservasViewModel.registrarIngreso(reserva)
+                                            }, modifier = Modifier.fillMaxWidth()) {
+                                                Text("REGISTRAR INGRESO")
+                                            }
+                                        }
+
+                                        if (reserva.estado == "En uso") {
+                                            Spacer(modifier = Modifier.height(12.dp))
+                                            OutlinedButton(
+                                                onClick = {
+                                                    reservasViewModel.registrarSalida(reserva)
+                                                },
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text("REGISTRAR SALIDA")
+                                            }
+                                        }
+
+                                        if (reserva.estado == "Pendiente" || reserva.estado == "Aprobada") {
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                if (reserva.estado == "Aprobada" && esHoy) {
+                                                    val limite = sumarMins(reserva.horario.take(5), 10)
+                                                    Text(
+                                                        "Disponible hasta las ${limite}",
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                                Spacer(modifier = Modifier.weight(1f))
+                                                Text(
+                                                    "Cancelar",
+                                                    color = MaterialTheme.colorScheme.error,
+                                                    textDecoration = TextDecoration.Underline,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    modifier = Modifier.clickable {
+                                                        reservaACancelar = reserva
+                                                    })
+                                            }
+                                        }
+
                                     }
                                 }
-
                             }
                         }
                     }
-                }
             }
         }
     }
+
     reservaACancelar?.let { reserva: Reserva ->
         AlertDialog(
             onDismissRequest = { reservaACancelar = null },
