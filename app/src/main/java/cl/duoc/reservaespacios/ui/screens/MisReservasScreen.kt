@@ -18,7 +18,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
@@ -43,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cl.duoc.reservaespacios.model.Reserva
 import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
-import cl.duoc.reservaespacios.ui.viewmodel.CargaUiState
+import cl.duoc.reservaespacios.ui.componentes.EstadoCarga
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 import cl.duoc.reservaespacios.utils.sumarMins
 import cl.duoc.reservaespacios.utils.textoDia
@@ -105,19 +104,7 @@ fun MisReservasScreen(reservasViewModel: ReservasViewModel, modifier: Modifier =
         }
 
         Column(modifier = Modifier.padding(16.dp)) {
-            when (val estado = carga) {
-                is CargaUiState.Cargando -> CircularProgressIndicator()
-                is CargaUiState.SinConexion -> Column {
-                    Text("No hay conexión a internet", color = MaterialTheme.colorScheme.error)
-                    TextButton(onClick = { reservasViewModel.cargarDatos() }) { Text("Reintentar") }
-                }
-
-                is CargaUiState.Error -> Text(
-                    estado.mensaje,
-                    color = MaterialTheme.colorScheme.error
-                )
-
-                is CargaUiState.Listo ->
+            EstadoCarga(carga, onReintentar = { reservasViewModel.cargarDatos() }) {
                     if (reservasFiltradas.isEmpty()) {
                         Text(
                             "No tienes reservas en esta sección",

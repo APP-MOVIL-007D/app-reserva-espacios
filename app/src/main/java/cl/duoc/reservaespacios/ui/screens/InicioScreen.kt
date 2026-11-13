@@ -3,7 +3,6 @@ package cl.duoc.reservaespacios.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,12 +21,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,7 +38,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cl.duoc.reservaespacios.ui.componentes.CuadroFecha
-import cl.duoc.reservaespacios.ui.viewmodel.CargaUiState
+import cl.duoc.reservaespacios.ui.componentes.EstadoCarga
 import cl.duoc.reservaespacios.ui.viewmodel.MenuViewModel
 import cl.duoc.reservaespacios.ui.viewmodel.ReservasViewModel
 
@@ -160,24 +157,11 @@ fun InicioScreen(
                         .padding(16.dp)
                 ) {
                     Text("TU PRÓXIMA RESERVA", style = MaterialTheme.typography.labelMedium)
-                    when (val estado = carga) {
-                        is CargaUiState.Cargando -> {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            CircularProgressIndicator()
-                        }
-
-                        is CargaUiState.SinConexion -> {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("No hay conexión a internet", color = MaterialTheme.colorScheme.error)
-                            TextButton(onClick = { reservasViewModel.cargarDatos() }) { Text("Reintentar") }
-                        }
-
-                        is CargaUiState.Error -> {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(estado.mensaje, color = MaterialTheme.colorScheme.error)
-                        }
-
-                        is CargaUiState.Listo ->
+                    EstadoCarga(
+                        carga,
+                        onReintentar = { reservasViewModel.cargarDatos() },
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
                             if (proxima != null) {
 
                                 Spacer(modifier = Modifier.height(8.dp))
